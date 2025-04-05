@@ -34,7 +34,5 @@ jwt:
 
 events:
   schedule:
-    complete-event-cron-job: "0 0 * * * *"
-    complete-event-older-than-in-minutes: 0
-    incomplete-event-cron-job: "0 * * * * *"
-    incomplete-event-older-than-in-minutes: 0
+    complete-event-cron-job: "0 1 * * * *"
+    complete-event-older-than-in-minutes: 60
