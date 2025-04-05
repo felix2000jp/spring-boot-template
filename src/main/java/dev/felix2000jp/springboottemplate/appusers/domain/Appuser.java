@@ -56,8 +56,16 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
         return this.username;
     }
 
+    public void updateUsername(Username newUsername) {
+        this.username = newUsername;
+    }
+
     public Password getPassword() {
         return this.password;
+    }
+
+    public void updatePassword(Password newPassword) {
+        this.password = newPassword;
     }
 
     public Scopes getScopes() {

@@ -2,6 +2,7 @@ package dev.felix2000jp.springboottemplate.appusers.application;
 
 
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuserDto;
+import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
 import dev.felix2000jp.springboottemplate.appusers.domain.AppuserPublisher;
 import dev.felix2000jp.springboottemplate.appusers.domain.AppuserRepository;
@@ -40,33 +41,64 @@ public class AppuserService {
 
     @Transactional
     public void create(CreateAppuserDto createAppuserDto) {
-        var appuser = Appuser.from(UUID.randomUUID(), createAppuserDto.username(), createAppuserDto.password());
-        appuser.addScopeApplication();
+        var appuserToCreate = Appuser.from(
+                UUID.randomUUID(),
+                createAppuserDto.username(),
+                securityService.generateEncodedPassword(createAppuserDto.password())
+        );
+        appuserToCreate.addScopeApplication();
 
-        if (appuserRepository.findByUsername(appuser.getUsername()).isPresent()) {
+        var doesUsernameExist = appuserRepository.existsByUsername(appuserToCreate.getUsername());
+        if (doesUsernameExist) {
             throw new AppuserAlreadyExistsException();
         }
 
-        appuserRepository.save(appuser);
-        log.info("Appuser with id {} created", appuser.getId());
+        appuserRepository.save(appuserToCreate);
+        log.info("Appuser with id {} created", appuserToCreate.getId());
 
-        appuserPublisher.publishAppuserCreatedEvent(appuser);
-        log.info("Published AppuserCreatedEvent with appuserId {}", appuser.getId());
+        appuserPublisher.publishAppuserCreatedEvent(appuserToCreate);
+        log.info("Published AppuserCreatedEvent with appuserId {}", appuserToCreate.getId());
+    }
+
+    public void update(UpdateAppuserDto updateAppuserDto) {
+        var user = securityService.loadUserFromToken();
+
+        var updatedAppuser = Appuser.from(
+                user.getId(),
+                updateAppuserDto.username(),
+                securityService.generateEncodedPassword(updateAppuserDto.password())
+        );
+
+        var appuserToUpdate = appuserRepository
+                .findById(updatedAppuser.getId())
+                .orElseThrow(AppuserNotFoundException::new);
+
+        var isUsernameNew = !updatedAppuser.getUsername().equals(appuserToUpdate.getUsername());
+        var doesUsernameExist = appuserRepository.existsByUsername(updatedAppuser.getUsername());
+
+        if (isUsernameNew && doesUsernameExist) {
+            throw new AppuserAlreadyExistsException();
+        }
+
+        appuserToUpdate.updateUsername(updatedAppuser.getUsername());
+        appuserToUpdate.updatePassword(updatedAppuser.getPassword());
+        appuserRepository.save(appuserToUpdate);
+        log.info("Appuser with id {} updated", appuserToUpdate.getId());
     }
 
     @Transactional
     public void delete() {
         var user = securityService.loadUserFromToken();
 
-        var appuser = appuserRepository
+        var appuserToDelete = appuserRepository
                 .findById(new AppuserId(user.getId()))
                 .orElseThrow(AppuserNotFoundException::new);
 
-        appuserRepository.delete(appuser);
-        log.info("Appuser with id {} deleted", appuser.getId());
+        appuserRepository.delete(appuserToDelete);
+        log.info("Appuser with id {} deleted", appuserToDelete.getId());
 
-        appuserPublisher.publishAppuserDeletedEvent(appuser);
-        log.info("Published AppuserDeletedEvent with appuserId {}", appuser.getId());
+        appuserPublisher.publishAppuserDeletedEvent(appuserToDelete);
+        log.info("Published AppuserDeletedEvent with appuserId {}", appuserToDelete.getId());
     }
 
 }

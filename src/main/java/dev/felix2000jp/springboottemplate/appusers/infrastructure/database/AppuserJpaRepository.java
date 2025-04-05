@@ -13,4 +13,6 @@ interface AppuserJpaRepository extends JpaRepository<Appuser, AppuserId> {
 
     Optional<Appuser> findByUsername(Username username);
 
+    boolean existsByUsername(Username username);
+
 }
