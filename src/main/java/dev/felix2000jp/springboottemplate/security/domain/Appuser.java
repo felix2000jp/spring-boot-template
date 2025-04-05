@@ -1,7 +1,7 @@
 package dev.felix2000jp.springboottemplate.security.domain;
 
-import dev.felix2000jp.springboottemplate.security.domain.valueobjects.Identity;
 import dev.felix2000jp.springboottemplate.security.domain.valueobjects.Password;
+import dev.felix2000jp.springboottemplate.security.domain.valueobjects.Identity;
 import dev.felix2000jp.springboottemplate.security.domain.valueobjects.Username;
 import jakarta.persistence.*;
 import org.jmolecules.ddd.types.AggregateRoot;

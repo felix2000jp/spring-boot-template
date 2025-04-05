@@ -1,7 +1,7 @@
 package dev.felix2000jp.springboottemplate.security.domain;
 
-import dev.felix2000jp.springboottemplate.security.domain.valueobjects.Identity;
 import dev.felix2000jp.springboottemplate.security.domain.valueobjects.Scope;
+import dev.felix2000jp.springboottemplate.security.domain.valueobjects.Identity;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import org.jmolecules.ddd.types.Entity;

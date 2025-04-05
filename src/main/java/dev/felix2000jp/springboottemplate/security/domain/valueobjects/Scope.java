@@ -6,10 +6,15 @@ import org.jmolecules.ddd.types.ValueObject;
 import org.springframework.util.Assert;
 
 @Embeddable
-public record Scope(@Column(name = "scope") String value) implements ValueObject {
+public record Scope(@Column(name = "scope") Role value) implements ValueObject {
 
     public Scope {
         Assert.notNull(value, "Scope cannot be null");
+    }
+
+    public enum Role {
+        ADMIN,
+        APPLICATION
     }
 
 }
