@@ -1,3 +1,40 @@
 spring:
   application:
     name: spring-boot-template
+  docker:
+    compose:
+      profiles:
+        active: dev
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: jdbc:postgresql://localhost:5432/application-db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    user: postgres
+    password: postgres
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+  tracing:
+    sampling:
+      probability: 1.0
+
+jwt:
+  rsa:
+    public-key: classpath:certificates/public.pem
+    private-key: classpath:certificates/private.pem
+
+events:
+  schedule:
+    complete-event-cron-job: "0 0 * * * *"
+    complete-event-older-than-in-minutes: 0
+    incomplete-event-cron-job: "0 * * * * *"
+    incomplete-event-older-than-in-minutes: 0
