@@ -38,11 +38,11 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
         this.scopes = scopes;
     }
 
-    public static Appuser from(UUID id, String username, String password, List<SecurityRole> scopes) {
+    public static Appuser from(UUID id, String username, String password) {
         var idObject = new AppuserId(id);
         var usernameObject = new Username(username);
         var passwordObject = new Password(password);
-        var scopesObject = new Scopes(scopes);
+        var scopesObject = new Scopes(List.of());
 
         return new Appuser(idObject, usernameObject, passwordObject, scopesObject);
     }
@@ -62,6 +62,14 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
 
     public Scopes getScopes() {
         return scopes;
+    }
+
+    public void addScopeApplication() {
+        scopes.value().add(SecurityRole.APPLICATION);
+    }
+
+    public void removeScopeApplication() {
+        scopes.value().remove(SecurityRole.APPLICATION);
     }
 
 }

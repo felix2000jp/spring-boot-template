@@ -61,7 +61,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scopes>runtime</scopes>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -77,39 +77,39 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scopes>test</scopes>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
-            <scopes>test</scopes>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-starter-test</artifactId>
-            <scopes>test</scopes>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-testcontainers</artifactId>
-            <scopes>test</scopes>
+            <scope>test</scope>
         </dependency>
 
         <!-- General tests dependencies -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <scopes>test</scopes>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <scopes>test</scopes>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jmolecules.integrations</groupId>
             <artifactId>jmolecules-archunit</artifactId>
-            <scopes>test</scopes>
+            <scope>test</scope>
         </dependency>
 
 
@@ -125,23 +125,23 @@
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-actuator</artifactId>
-            <scopes>runtime</scopes>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-observability</artifactId>
-            <scopes>runtime</scopes>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
-            <scopes>runtime</scopes>
+            <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-docker-compose</artifactId>
-            <scopes>runtime</scopes>
+            <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -168,14 +168,14 @@
                 <artifactId>spring-modulith-bom</artifactId>
                 <version>${spring-modulith.version}</version>
                 <type>pom</type>
-                <scopes>import</scopes>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.jmolecules</groupId>
                 <artifactId>jmolecules-bom</artifactId>
                 <version>${jmolecules-bom.version}</version>
                 <type>pom</type>
-                <scopes>import</scopes>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
