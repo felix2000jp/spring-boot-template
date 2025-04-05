@@ -57,4 +57,8 @@ public class Appuser implements AggregateRoot<Appuser, Identity> {
         this.password = password;
     }
 
+    public Set<AppuserScope> getScopes() {
+        return scopes;
+    }
+
 }

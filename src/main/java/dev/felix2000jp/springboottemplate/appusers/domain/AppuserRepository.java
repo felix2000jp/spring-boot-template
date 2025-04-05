@@ -1,21 +1,18 @@
 package dev.felix2000jp.springboottemplate.appusers.domain;
 
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Identity;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import org.jmolecules.ddd.types.Repository;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface AppuserRepository extends Repository<Appuser, Identity> {
 
-    List<Appuser> findAll(int pageNumber);
+    Optional<Appuser> findById(Identity id);
 
-    Optional<Appuser> findById(UUID id);
+    Optional<Appuser> findByUsername(Username username);
 
-    Optional<Appuser> findByUsername(String username);
-
-    void deleteById(UUID id);
+    void delete(Appuser id);
 
     void save(Appuser appuser);
 
