@@ -2,6 +2,7 @@ package dev.felix2000jp.springboottemplate.appusers.infrastructure.security;
 
 import dev.felix2000jp.springboottemplate.appusers.domain.AppuserRepository;
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserNotFoundException;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.shared.security.SecurityScope;
 import dev.felix2000jp.springboottemplate.shared.security.SecurityService;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -98,7 +98,7 @@ class AppuserSecurityService implements SecurityService {
                 appuser.getId().value(),
                 appuser.getUsername().value(),
                 appuser.getPassword().value(),
-                new HashSet<>(appuser.getScopes().value())
+                appuser.getScopes().stream().map(Scope::value).collect(Collectors.toSet())
         );
     }
 

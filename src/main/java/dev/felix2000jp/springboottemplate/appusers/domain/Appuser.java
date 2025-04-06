@@ -2,11 +2,13 @@ package dev.felix2000jp.springboottemplate.appusers.domain;
 
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
-import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scopes;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.shared.security.SecurityScope;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.FetchType;
 import org.jmolecules.ddd.types.AggregateRoot;
 
 import java.util.List;
@@ -25,26 +27,31 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
     @Embedded
     private Password password;
 
-    @Embedded
-    private Scopes scopes;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Scope> scopes;
 
     protected Appuser() {
     }
 
-    protected Appuser(AppuserId id, Username username, Password password, Scopes scopes) {
+    protected Appuser(AppuserId id, Username username, Password password, List<Scope> scopes) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.scopes = scopes;
     }
 
-    public static Appuser from(UUID id, String username, String password) {
-        var idObject = new AppuserId(id);
-        var usernameObject = new Username(username);
-        var passwordObject = new Password(password);
-        var scopesObject = new Scopes(List.of());
+    public static Appuser from(UUID id, String username, String password, SecurityScope initialScope) {
+        var idValueObject = new AppuserId(id);
+        var usernameValueObject = new Username(username);
+        var passwordValueObject = new Password(password);
+        var scopeValueObject = new Scope(initialScope);
 
-        return new Appuser(idObject, usernameObject, passwordObject, scopesObject);
+        return new Appuser(
+                idValueObject,
+                usernameValueObject,
+                passwordValueObject,
+                List.of(scopeValueObject)
+        );
     }
 
     @Override
@@ -68,16 +75,8 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
         this.password = newPassword;
     }
 
-    public Scopes getScopes() {
+    public List<Scope> getScopes() {
         return scopes;
-    }
-
-    public void addScopeApplication() {
-        scopes.value().add(SecurityScope.APPLICATION);
-    }
-
-    public void removeScopeApplication() {
-        scopes.value().remove(SecurityScope.APPLICATION);
     }
 
 }

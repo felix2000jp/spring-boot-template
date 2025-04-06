@@ -11,7 +11,7 @@ class AppuserMapper {
         return new AppuserDto(
                 appuser.getId().value(),
                 appuser.getUsername().value(),
-                appuser.getScopes().value().stream().map(Enum::name).toList()
+                appuser.getScopes().stream().map(s -> s.value().name()).toList()
         );
     }
 

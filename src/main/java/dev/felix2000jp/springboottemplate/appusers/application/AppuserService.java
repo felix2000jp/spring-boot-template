@@ -11,6 +11,7 @@ import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserNotF
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
+import dev.felix2000jp.springboottemplate.shared.security.SecurityScope;
 import dev.felix2000jp.springboottemplate.shared.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +57,9 @@ public class AppuserService {
         var appuserToCreate = Appuser.from(
                 UUID.randomUUID(),
                 createAppuserDto.username(),
-                securityService.generateEncodedPassword(createAppuserDto.password())
+                securityService.generateEncodedPassword(createAppuserDto.password()),
+                SecurityScope.APPLICATION
         );
-        appuserToCreate.addScopeApplication();
 
         var doesUsernameExist = appuserRepository.existsByUsername(appuserToCreate.getUsername());
         if (doesUsernameExist) {
