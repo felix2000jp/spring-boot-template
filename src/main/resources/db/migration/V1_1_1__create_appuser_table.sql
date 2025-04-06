@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS appuser
 
 CREATE TABLE IF NOT EXISTS appuser_scopes
 (
-    appuser_id uuid REFERENCES appuser (id),
+    appuser_id uuid REFERENCES appuser (id) ON DELETE CASCADE,
     scope      smallint NOT NULL,
     PRIMARY KEY (appuser_id, scope)
 );

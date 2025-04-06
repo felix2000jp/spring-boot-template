@@ -16,6 +16,6 @@ public class TestcontainersConfiguration {
     }
 
     public static void truncateAppuserTables(JdbcTemplate jdbcTemplate) {
-        jdbcTemplate.execute("TRUNCATE TABLE appuser");
+        jdbcTemplate.execute("TRUNCATE TABLE appuser CASCADE");
     }
 }
