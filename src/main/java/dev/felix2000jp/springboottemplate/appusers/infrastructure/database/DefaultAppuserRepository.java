@@ -48,6 +48,12 @@ class DefaultAppuserRepository implements AppuserRepository {
 
     @Override
     @Transactional
+    public void deleteAll() {
+        appuserJpaRepository.deleteAll();
+    }
+
+    @Override
+    @Transactional
     public void save(Appuser appuser) {
         appuserJpaRepository.save(appuser);
     }

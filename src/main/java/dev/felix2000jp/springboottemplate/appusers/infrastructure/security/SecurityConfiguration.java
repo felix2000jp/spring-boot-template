@@ -1,8 +1,9 @@
-package dev.felix2000jp.springboottemplate.shared.security;
+package dev.felix2000jp.springboottemplate.appusers.infrastructure.security;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import dev.felix2000jp.springboottemplate.shared.security.SecurityScope;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,11 +36,11 @@ class SecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher("/api/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().hasAnyAuthority(SecurityScope.APPLICATION.getAuthority())
+                        .requestMatchers("/admin").hasAuthority(SecurityScope.APPLICATION.getAuthority())
+                        .anyRequest().hasAuthority(SecurityScope.APPLICATION.getAuthority())
                 )
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()))

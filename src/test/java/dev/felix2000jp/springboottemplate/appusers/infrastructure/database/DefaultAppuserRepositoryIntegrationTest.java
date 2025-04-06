@@ -10,19 +10,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 
 @DataJpaTest
 @Import({TestcontainersConfiguration.class, DefaultAppuserRepository.class})
 class DefaultAppuserRepositoryIntegrationTest {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
     @Autowired
     private DefaultAppuserRepository appuserRepository;
 
@@ -30,7 +26,7 @@ class DefaultAppuserRepositoryIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        TestcontainersConfiguration.truncateAppuserTables(jdbcTemplate);
+        appuserRepository.deleteAll();
 
         appuser = Appuser.from(UUID.randomUUID(), "username", "password", SecurityScope.APPLICATION);
         appuserRepository.save(appuser);
@@ -110,12 +106,12 @@ class DefaultAppuserRepositoryIntegrationTest {
     }
 
     @Test
-    void delete_given_not_found_appuser_then_fail_without_throwing() {
-        assertThatCode(() -> {
-            var appuserToDelete = Appuser.from(UUID.randomUUID(), "username", "password", SecurityScope.APPLICATION);
+    void deleteAll_given_appuser_then_delete_all_appusers() {
+        appuserRepository.deleteAll();
 
-            appuserRepository.delete(appuserToDelete);
-        }).doesNotThrowAnyException();
+        var idValueObject = appuser.getId();
+        var doesAppuserExist = appuserRepository.existsById(idValueObject);
+        assertThat(doesAppuserExist).isFalse();
     }
 
     @Test

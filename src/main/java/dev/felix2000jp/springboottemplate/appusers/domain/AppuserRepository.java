@@ -18,6 +18,8 @@ public interface AppuserRepository extends Repository<Appuser, AppuserId> {
 
     void delete(Appuser appuser);
 
+    void deleteAll();
+
     void save(Appuser appuser);
 
 }

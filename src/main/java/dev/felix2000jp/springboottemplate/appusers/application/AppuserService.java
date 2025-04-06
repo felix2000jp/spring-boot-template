@@ -109,4 +109,13 @@ public class AppuserService {
         log.info("Published AppuserDeletedEvent with appuserId {}", appuserToDelete.getId());
     }
 
+    public String login() {
+        var securityUser = securityService.loadUserFromSecurityContext();
+
+        return securityService.generateToken(
+                securityUser.getUsername(),
+                securityUser.getId().toString(),
+                String.join(" ", securityUser.getAuthorities().stream().map(Enum::name).toList())
+        );
+    }
 }
