@@ -3,6 +3,7 @@ package dev.felix2000jp.springboottemplate.appusers.infrastructure.database;
 import dev.felix2000jp.springboottemplate.TestcontainersConfiguration;
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.shared.security.SecurityScope;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 @DataJpaTest
 @Import({TestcontainersConfiguration.class, DefaultAppuserRepository.class})
@@ -49,4 +51,82 @@ class DefaultAppuserRepositoryIntegrationTest {
 
         assertThat(actual).isNotPresent();
     }
+
+    @Test
+    void existsById_given_id_of_appuser_then_return_true() {
+        var idValueObject = appuser.getId();
+        var actual = appuserRepository.existsById(idValueObject);
+
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    void existsById_given_not_found_id_then_return_false() {
+        var idValueObject = new AppuserId(UUID.randomUUID());
+        var actual = appuserRepository.existsById(idValueObject);
+
+        assertThat(actual).isFalse();
+    }
+
+    @Test
+    void findByUsername_given_username_of_appuser_then_return_appuser() {
+        var usernameValueObject = appuser.getUsername();
+        var actual = appuserRepository.findByUsername(usernameValueObject);
+
+        assertThat(actual).isPresent();
+    }
+
+    @Test
+    void findByUsername_given_not_found_username_then_return_empty_optional() {
+        var usernameValueObject = new Username("non existent username");
+        var actual = appuserRepository.findByUsername(usernameValueObject);
+
+        assertThat(actual).isNotPresent();
+    }
+
+    @Test
+    void existsByUsername_given_username_of_appuser_then_return_true() {
+        var usernameValueObject = appuser.getUsername();
+        var actual = appuserRepository.existsByUsername(usernameValueObject);
+
+        assertThat(actual).isTrue();
+    }
+
+    @Test
+    void existsByUsername_given_not_found_username_then_return_false() {
+        var usernameValueObject = new Username("non existent username");
+        var actual = appuserRepository.existsByUsername(usernameValueObject);
+
+        assertThat(actual).isFalse();
+    }
+
+    @Test
+    void delete_given_appuser_then_delete_appuser() {
+        appuserRepository.delete(appuser);
+
+        var idValueObject = appuser.getId();
+        var doesAppuserExist = appuserRepository.existsById(idValueObject);
+        assertThat(doesAppuserExist).isFalse();
+    }
+
+    @Test
+    void delete_given_not_found_appuser_then_fail_without_throwing() {
+        assertThatCode(() -> {
+            var appuserToDelete = Appuser.from(UUID.randomUUID(), "username", "password", SecurityScope.APPLICATION);
+
+            appuserRepository.delete(appuserToDelete);
+        }).doesNotThrowAnyException();
+    }
+
+    @Test
+    void save_given_appuser_then_save_appuser() {
+        var appuserToCreate = Appuser.from(UUID.randomUUID(), "username", "password", SecurityScope.APPLICATION);
+
+        appuserRepository.save(appuserToCreate);
+
+        var idValueObject = appuserToCreate.getId();
+        var createdAppuser = appuserRepository.findById(idValueObject);
+        assertThat(createdAppuser).isNotNull();
+    }
+
 }
