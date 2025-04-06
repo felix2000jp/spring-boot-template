@@ -74,7 +74,7 @@ public class AppuserService {
         var user = securityService.loadUserFromSecurityContext();
         var idValueObject = new AppuserId(user.getId());
         var usernameValueObject = new Username(updateAppuserDto.username());
-        var passwordValueObject = new Password(updateAppuserDto.password());
+        var passwordValueObject = new Password(securityService.generateEncodedPassword(updateAppuserDto.password()));
 
         var appuserToUpdate = appuserRepository
                 .findById(idValueObject)

@@ -14,6 +14,13 @@ public class SecurityUser implements UserDetails {
     private final String password;
     private final Set<SecurityScope> scopes;
 
+    public SecurityUser(UUID id, String username, String password, SecurityScope scope) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.scopes = Set.of(scope);
+    }
+
     public SecurityUser(UUID id, String username, String password, Set<SecurityScope> scopes) {
         this.id = id;
         this.username = username;
