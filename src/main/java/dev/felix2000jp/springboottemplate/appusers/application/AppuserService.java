@@ -87,8 +87,8 @@ public class AppuserService {
             throw new AppuserAlreadyExistsException();
         }
 
-        appuserToUpdate.updateUsername(usernameValueObject);
-        appuserToUpdate.updatePassword(passwordValueObject);
+        appuserToUpdate.setUsername(usernameValueObject);
+        appuserToUpdate.setPassword(passwordValueObject);
         appuserRepository.save(appuserToUpdate);
         log.info("Appuser with id {} updated", appuserToUpdate.getId());
     }

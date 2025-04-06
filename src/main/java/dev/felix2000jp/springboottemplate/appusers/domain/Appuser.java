@@ -63,7 +63,7 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
         return this.username;
     }
 
-    public void updateUsername(Username newUsername) {
+    public void setUsername(Username newUsername) {
         this.username = newUsername;
     }
 
@@ -71,7 +71,7 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
         return this.password;
     }
 
-    public void updatePassword(Password newPassword) {
+    public void setPassword(Password newPassword) {
         this.password = newPassword;
     }
 
