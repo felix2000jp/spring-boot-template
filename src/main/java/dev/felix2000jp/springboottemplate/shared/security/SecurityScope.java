@@ -4,17 +4,14 @@ import org.springframework.modulith.NamedInterface;
 import org.springframework.security.core.GrantedAuthority;
 
 @NamedInterface
-public class SecurityScope implements GrantedAuthority {
+public enum SecurityScope implements GrantedAuthority {
 
-    private final SecurityRole scope;
-
-    public SecurityScope(SecurityRole scope) {
-        this.scope = scope;
-    }
+    ADMIN,
+    APPLICATION;
 
     @Override
     public String getAuthority() {
-        return "SCOPE_" + scope.name();
+        return "SCOPE_" + name();
     }
 
 }

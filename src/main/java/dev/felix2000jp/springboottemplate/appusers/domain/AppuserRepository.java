@@ -5,7 +5,6 @@ import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import org.jmolecules.ddd.types.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 public interface AppuserRepository extends Repository<Appuser, AppuserId> {
 

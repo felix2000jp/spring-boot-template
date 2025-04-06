@@ -33,21 +33,15 @@ class SecurityConfiguration {
     private RSAPrivateKey privateKey;
 
     @Bean
-    SecurityFilterChain authFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .securityMatcher("/auth/**")
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .httpBasic(Customizer.withDefaults())
-                .build();
-    }
-
-    @Bean
-    SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher("/api/**")
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authorize -> authorize
+                        .anyRequest().hasAnyAuthority(SecurityScope.APPLICATION.getAuthority())
+                )
+                .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()))
                 .build();
     }

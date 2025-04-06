@@ -10,6 +10,6 @@ public interface SecurityService extends UserDetailsService {
 
     String generateEncodedPassword(String password);
 
-    SecurityUser loadUserFromToken();
+    SecurityUser loadUserFromSecurityContext();
 
 }

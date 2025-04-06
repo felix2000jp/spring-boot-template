@@ -3,7 +3,6 @@ package dev.felix2000jp.springboottemplate.appusers.infrastructure.security;
 import dev.felix2000jp.springboottemplate.appusers.domain.AppuserRepository;
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
-import dev.felix2000jp.springboottemplate.shared.security.SecurityRole;
 import dev.felix2000jp.springboottemplate.shared.security.SecurityScope;
 import dev.felix2000jp.springboottemplate.shared.security.SecurityService;
 import dev.felix2000jp.springboottemplate.shared.security.SecurityUser;
@@ -20,11 +19,12 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-class SecurityAppuserService implements SecurityService {
+class AppuserSecurityService implements SecurityService {
 
     private static final String ID_CLAIM_NAME = "id";
     private static final String SCOPE_CLAIM_NAME = "scope";
@@ -33,7 +33,7 @@ class SecurityAppuserService implements SecurityService {
     private final PasswordEncoder passwordEncoder;
     private final AppuserRepository appuserService;
 
-    SecurityAppuserService(JwtEncoder jwtEncoder, PasswordEncoder passwordEncoder, AppuserRepository appuserService) {
+    AppuserSecurityService(JwtEncoder jwtEncoder, PasswordEncoder passwordEncoder, AppuserRepository appuserService) {
         this.jwtEncoder = jwtEncoder;
         this.passwordEncoder = passwordEncoder;
         this.appuserService = appuserService;
@@ -62,9 +62,13 @@ class SecurityAppuserService implements SecurityService {
     }
 
     @Override
-    public SecurityUser loadUserFromToken() {
+    public SecurityUser loadUserFromSecurityContext() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         var principal = authentication.getPrincipal();
+
+        if (principal instanceof SecurityUser securityUser) {
+            return securityUser;
+        }
 
         if (principal instanceof Jwt jwt) {
             var idClaim = jwt.getClaimAsString(ID_CLAIM_NAME);
@@ -73,28 +77,29 @@ class SecurityAppuserService implements SecurityService {
             var scopeClaims = jwt.getClaimAsString(SCOPE_CLAIM_NAME).split(" ");
             var scopes = Arrays
                     .stream(scopeClaims)
-                    .map(SecurityRole::valueOf)
-                    .map(SecurityScope::new)
+                    .map(SecurityScope::valueOf)
                     .collect(Collectors.toSet());
 
             return new SecurityUser(id, jwt.getSubject(), "not available", scopes);
         }
 
-        throw new AccessDeniedException("Only JWT authenticated users can access this resource");
+        throw new AccessDeniedException("Invalid authentication method");
     }
 
     @Override
     public SecurityUser loadUserByUsername(String username) throws UsernameNotFoundException {
-        var usernameObject = new Username(username);
+        var usernameValueObject = new Username(username);
+
         var appuser = appuserService
-                .findByUsername(usernameObject)
+                .findByUsername(usernameValueObject)
                 .orElseThrow(AppuserNotFoundException::new);
 
         return new SecurityUser(
                 appuser.getId().value(),
                 appuser.getUsername().value(),
                 appuser.getPassword().value(),
-                appuser.getScopes().value().stream().map(SecurityScope::new).collect(Collectors.toSet()));
+                new HashSet<>(appuser.getScopes().value())
+        );
     }
 
 }
