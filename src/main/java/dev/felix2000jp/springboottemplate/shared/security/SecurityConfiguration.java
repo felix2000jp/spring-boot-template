@@ -1,9 +1,8 @@
-package dev.felix2000jp.springboottemplate.appusers.infrastructure.security;
+package dev.felix2000jp.springboottemplate.shared.security;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import dev.felix2000jp.springboottemplate.shared.security.SecurityScope;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

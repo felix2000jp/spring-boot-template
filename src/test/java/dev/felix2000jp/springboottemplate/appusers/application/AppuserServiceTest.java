@@ -43,7 +43,7 @@ class AppuserServiceTest {
     private ArgumentCaptor<Appuser> appuserCaptor;
 
     @Test
-    void get_given_security_user_then_return_appuser_dto() {
+    void get_then_return_appuser_dto() {
         var securityUser = new SecurityUser(
                 UUID.randomUUID(),
                 "username",
@@ -165,7 +165,7 @@ class AppuserServiceTest {
     }
 
     @Test
-    void delete_given_security_user_then_delete_appuser() {
+    void delete_then_delete_appuser() {
         var securityUser = new SecurityUser(
                 UUID.randomUUID(),
                 "username",

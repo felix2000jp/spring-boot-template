@@ -106,7 +106,7 @@ class DefaultAppuserRepositoryIntegrationTest {
     }
 
     @Test
-    void deleteAll_given_appuser_then_delete_all_appusers() {
+    void deleteAll_then_delete_all_appusers() {
         appuserRepository.deleteAll();
 
         var idValueObject = appuser.getId();
