@@ -5,10 +5,7 @@ import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.shared.security.SecurityScope;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.*;
 import org.jmolecules.ddd.types.AggregateRoot;
 
 import java.util.List;
@@ -18,16 +15,20 @@ import java.util.UUID;
 @jakarta.persistence.Entity
 public class Appuser implements AggregateRoot<Appuser, AppuserId> {
 
-    @EmbeddedId
+    @Id
+    @AttributeOverride(name = "value", column = @Column(name = "id"))
     private AppuserId id;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "username"))
     private Username username;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "password"))
     private Password password;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @AttributeOverride(name = "value", column = @Column(name = "scope"))
     private List<Scope> scopes;
 
     protected Appuser() {
