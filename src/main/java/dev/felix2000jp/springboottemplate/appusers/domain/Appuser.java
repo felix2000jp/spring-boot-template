@@ -15,7 +15,7 @@ import java.util.UUID;
 @jakarta.persistence.Entity
 public class Appuser implements AggregateRoot<Appuser, AppuserId> {
 
-    @Id
+    @EmbeddedId
     @AttributeOverride(name = "value", column = @Column(name = "id"))
     private AppuserId id;
 

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -40,15 +41,15 @@ class AppuserSecurityService implements SecurityService {
     }
 
     @Override
-    public String generateToken(String subject, String idClaimValue, String scopeClaimValue) {
+    public String generateToken(UUID id, String username, Collection<SecurityScope> securityScopes) {
         var now = Instant.now();
-        var expiration = now.plus(12, ChronoUnit.HOURS);
+        var expiration = now.plus(4, ChronoUnit.HOURS);
 
         var claims = JwtClaimsSet.builder()
                 .issuer("self")
-                .subject(subject)
-                .claim(ID_CLAIM_NAME, idClaimValue)
-                .claim(SCOPE_CLAIM_NAME, scopeClaimValue)
+                .subject(username)
+                .claim(ID_CLAIM_NAME, id.toString())
+                .claim(SCOPE_CLAIM_NAME, String.join(" ", securityScopes.stream().map(Enum::name).toList()))
                 .issuedAt(now)
                 .expiresAt(expiration)
                 .build();

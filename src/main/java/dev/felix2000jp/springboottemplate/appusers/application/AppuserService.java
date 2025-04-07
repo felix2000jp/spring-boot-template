@@ -113,9 +113,9 @@ public class AppuserService {
         var securityUser = securityService.loadUserFromSecurityContext();
 
         return securityService.generateToken(
+                securityUser.getId(),
                 securityUser.getUsername(),
-                securityUser.getId().toString(),
-                String.join(" ", securityUser.getAuthorities().stream().map(Enum::name).toList())
+                securityUser.getAuthorities()
         );
     }
 }
