@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 
 public record UpdateAppuserDto(
         @NotBlank
-        @Size(min = 5, max = 255)
+        @Size(min = 3, max = 255)
         String username,
 
         @NotBlank

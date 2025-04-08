@@ -192,8 +192,8 @@ class AppuserControllerTest {
                 arguments("{ 'username': 'username', 'password': ' ' }"),
                 arguments("{ 'username': 'lol', 'password': 'password' }"),
                 arguments("{ 'username': 'username', 'password': 'lol' }"),
-                arguments("{ 'username': '" + "a".repeat(501) + "', 'password': 'password' }"),
-                arguments("{ 'username': 'username', 'password': '" + "a".repeat(501) + "' }")
+                arguments("{ 'username': '" + "a".repeat(256) + "', 'password': 'password' }"),
+                arguments("{ 'username': 'username', 'password': '" + "a".repeat(256) + "' }")
         );
     }
 
