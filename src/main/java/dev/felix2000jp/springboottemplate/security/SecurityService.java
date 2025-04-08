@@ -4,7 +4,6 @@ import dev.felix2000jp.springboottemplate.security.domain.AppuserRepository;
 import dev.felix2000jp.springboottemplate.security.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springboottemplate.security.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.security.domain.valueobjects.Username;
-import org.springframework.modulith.NamedInterface;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +13,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@NamedInterface
+@Service
 public class SecurityService implements UserDetailsService {
 
     private static final String ID_CLAIM_NAME = "id";

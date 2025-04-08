@@ -1,12 +1,10 @@
 package dev.felix2000jp.springboottemplate.security;
 
-import org.springframework.modulith.NamedInterface;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Set;
 import java.util.UUID;
 
-@NamedInterface
 public class SecurityUser implements UserDetails {
 
     private final UUID id;
