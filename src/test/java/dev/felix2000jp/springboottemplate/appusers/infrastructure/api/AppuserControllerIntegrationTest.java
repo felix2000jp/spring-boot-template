@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.modulith.test.ApplicationModuleTest;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,9 +52,9 @@ class AppuserControllerIntegrationTest {
         appuserRepository.save(appuser);
 
         var token = securityService.generateToken(
+                appuser.getId().value(),
                 appuser.getUsername().value(),
-                appuser.getId().value().toString(),
-                SecurityScope.APPLICATION.name()
+                List.of(SecurityScope.APPLICATION)
         );
         headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + token);
