@@ -82,7 +82,7 @@ class AppuserControllerTest {
         mockMvc
                 .perform(request)
                 .andExpect(status().isCreated())
-                .andExpect(header().string("LOCATION", "/api/security/me"));
+                .andExpect(header().string("LOCATION", "/api/appusers"));
     }
 
     @Test

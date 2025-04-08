@@ -31,7 +31,7 @@ class AppuserController {
     @PostMapping
     ResponseEntity<Void> create(@Valid @RequestBody CreateAppuserDto createAppuserDto) {
         appuserService.create(createAppuserDto);
-        var location = URI.create("/api/appusers/me");
+        var location = URI.create("/api/appusers");
         return ResponseEntity.created(location).build();
     }
 
