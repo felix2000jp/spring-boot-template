@@ -1,6 +1,6 @@
 package dev.felix2000jp.springboottemplate.notes.application;
 
-import dev.felix2000jp.springboottemplate.shared.security.SecurityService;
+import dev.felix2000jp.springboottemplate.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
