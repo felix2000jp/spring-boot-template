@@ -12,10 +12,10 @@ import java.time.Duration;
 @EnableScheduling
 class CleanCompletedEventsJob {
 
+    private final CompletedEventPublications completeEvents;
+
     @Value("${events.schedule.complete-event-older-than-in-minutes}")
     private int completeEventOlderThanInMinutes;
-
-    private final CompletedEventPublications completeEvents;
 
     CleanCompletedEventsJob(CompletedEventPublications completeEvents) {
         this.completeEvents = completeEvents;

@@ -1,10 +1,10 @@
 package dev.felix2000jp.springboottemplate.security.domain;
 
+import dev.felix2000jp.springboottemplate.security.SecurityScope;
 import dev.felix2000jp.springboottemplate.security.domain.valueobjects.AppuserId;
 import dev.felix2000jp.springboottemplate.security.domain.valueobjects.Password;
 import dev.felix2000jp.springboottemplate.security.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.security.domain.valueobjects.Username;
-import dev.felix2000jp.springboottemplate.security.SecurityScope;
 import jakarta.persistence.*;
 import org.jmolecules.ddd.types.AggregateRoot;
 
@@ -16,15 +16,19 @@ import java.util.UUID;
 public class Appuser implements AggregateRoot<Appuser, AppuserId> {
 
     @EmbeddedId
+    @AttributeOverride(name = "value", column = @Column(name = "id"))
     private AppuserId id;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "username"))
     private Username username;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "password"))
     private Password password;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @AttributeOverride(name = "value", column = @Column(name = "scope"))
     private List<Scope> scopes;
 
     protected Appuser() {
