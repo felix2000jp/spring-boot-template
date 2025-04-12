@@ -10,7 +10,7 @@ import java.util.UUID;
 public record AppuserId(UUID value) implements Identifier {
 
     public AppuserId {
-        Assert.notNull(value, "AppuserId value cannot be null or blank.");
+        Assert.notNull(value, "AppuserId cannot be null");
     }
 
 }
