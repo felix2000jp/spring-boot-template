@@ -110,12 +110,12 @@ public class AppuserService {
     }
 
     public String login() {
-        var securityUser = securityService.loadUserFromSecurityContext();
+        var user = securityService.loadUserFromSecurityContext();
 
         return securityService.generateToken(
-                securityUser.getId(),
-                securityUser.getUsername(),
-                securityUser.getAuthorities()
+                user.getId(),
+                user.getUsername(),
+                user.getAuthorities()
         );
     }
 }

@@ -13,4 +13,6 @@ interface NoteJpaRepository extends JpaRepository<Note, NoteId> {
 
     List<Note> findAllByIdAppuserIdValue(UUID appuserId);
 
+    void deleteAllByIdAppuserIdValue(UUID appuserId);
+
 }

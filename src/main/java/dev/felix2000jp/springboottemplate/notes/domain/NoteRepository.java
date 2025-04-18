@@ -8,13 +8,15 @@ import java.util.UUID;
 
 public interface NoteRepository {
 
-    List<Note> findAllByIdAppuserIdValue(UUID appuserId);
+    List<Note> findAllByIdAppuserIdValue(UUID appuserIdValue);
 
     Optional<Note> findById(NoteId id);
 
     void delete(Note note);
 
     void deleteAll();
+
+    void deleteAllByIdAppuserIdValue(UUID appuserIdValue);
 
     void save(Note note);
 
