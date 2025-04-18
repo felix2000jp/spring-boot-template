@@ -87,11 +87,12 @@ class NoteServiceTest {
     @Test
     void getByNoteIdValue_given_not_found_id_then_throw_exception() {
         var note = Note.from(user.getId(), UUID.randomUUID(), "title", "content");
+        var noteIdValue = note.getId().noteIdValue();
 
         when(noteRepository.findById(note.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(
-                () -> noteService.getByNoteIdValue(note.getId().noteIdValue())
+                () -> noteService.getByNoteIdValue(noteIdValue)
         ).isInstanceOf(NoteNotFoundException.class);
     }
 
@@ -123,12 +124,13 @@ class NoteServiceTest {
     @Test
     void update_given_not_found_id_and_dto_then_exception() {
         var note = Note.from(user.getId(), UUID.randomUUID(), "title", "content");
+        var noteIdValue = note.getId().noteIdValue();
         var updateNoteDto = new UpdateNoteDto("new title", "new content");
 
         when(noteRepository.findById(note.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(
-                () -> noteService.update(note.getId().noteIdValue(), updateNoteDto)
+                () -> noteService.update(noteIdValue, updateNoteDto)
         ).isInstanceOf(NoteNotFoundException.class);
     }
 
@@ -147,11 +149,12 @@ class NoteServiceTest {
     @Test
     void deleteByNoteIdValue_given_not_found_id_then_throw_exception() {
         var note = Note.from(user.getId(), UUID.randomUUID(), "title", "content");
+        var noteIdValue = note.getId().noteIdValue();
 
         when(noteRepository.findById(note.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(
-                () -> noteService.deleteByNoteIdValue(note.getId().noteIdValue())
+                () -> noteService.deleteByNoteIdValue(noteIdValue)
         ).isInstanceOf(NoteNotFoundException.class);
     }
 

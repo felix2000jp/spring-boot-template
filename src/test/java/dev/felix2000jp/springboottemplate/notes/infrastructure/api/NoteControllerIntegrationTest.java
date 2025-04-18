@@ -98,7 +98,7 @@ class NoteControllerIntegrationTest {
         assertThat(createNoteEntity.getStatusCode().value()).isEqualTo(201);
 
         var userNotes = noteRepository.findAllByIdAppuserIdValue(note.getId().appuserIdValue());
-        assertThat(userNotes.size()).isEqualTo(2);
+        assertThat(userNotes).hasSize(2);
     }
 
     @Test
