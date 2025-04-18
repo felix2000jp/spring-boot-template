@@ -50,7 +50,6 @@ class AppuserController {
     @PostMapping("/login")
     ResponseEntity<String> login() {
         var body = appuserService.login();
-
         return ResponseEntity.ok(body);
     }
 
