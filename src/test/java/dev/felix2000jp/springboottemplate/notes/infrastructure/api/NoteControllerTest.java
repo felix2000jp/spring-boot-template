@@ -98,9 +98,6 @@ class NoteControllerTest {
         var body = String.format("""
                 { "title": "%s", "content": "%s" }
                 """, createNoteDto.title(), createNoteDto.content());
-        var expectedResponse = String.format("""
-                { "id": "%s", "title": "%s", "content": "%s" }
-                """, noteDto.id(), noteDto.title(), noteDto.content());
 
         var request = post("/api/notes").contentType(MediaType.APPLICATION_JSON).content(body);
         mockMvc
