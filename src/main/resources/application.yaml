@@ -31,8 +31,3 @@ jwt:
   rsa:
     public-key: classpath:certificates/public.pem
     private-key: classpath:certificates/private.pem
-
-events:
-  schedule:
-    complete-event-cron-job: "0 1 * * * *"
-    complete-event-older-than-in-minutes: 60
