@@ -25,6 +25,7 @@ class DefaultAppuserRepository implements AppuserRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existsById(AppuserId id) {
         return appuserJpaRepository.existsById(id);
     }
@@ -36,6 +37,7 @@ class DefaultAppuserRepository implements AppuserRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existsByUsername(Username username) {
         return appuserJpaRepository.existsByUsername(username);
     }
