@@ -75,6 +75,14 @@ class DefaultNoteRepositoryIntegrationTest {
     }
 
     @Test
+    void deleteAllByIdAppuserIdValue_then_delete_all_notes() {
+        noteRepository.deleteAllByIdAppuserIdValue(note.getId().appuserIdValue());
+
+        var actual = noteRepository.findById(note.getId());
+        assertThat(actual).isNotPresent();
+    }
+
+    @Test
     void save_given_note_then_save_note() {
         var noteToCreate = Note.from(UUID.randomUUID(), UUID.randomUUID(), "title 1", "content 1");
 
