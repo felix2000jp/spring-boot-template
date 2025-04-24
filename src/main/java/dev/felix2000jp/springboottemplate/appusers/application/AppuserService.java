@@ -42,6 +42,7 @@ public class AppuserService {
         this.securityService = securityService;
     }
 
+    @Transactional(readOnly = true)
     public AppuserDto get() {
         var user = securityService.loadUserFromSecurityContext();
         var idValueObject = new AppuserId(user.getId());
@@ -53,6 +54,7 @@ public class AppuserService {
         return appuserMapper.toDto(appuser);
     }
 
+    @Transactional
     public void create(CreateAppuserDto createAppuserDto) {
         var appuserToCreate = Appuser.from(
                 UUID.randomUUID(),
@@ -70,6 +72,7 @@ public class AppuserService {
         log.info("Appuser with id {} created", appuserToCreate.getId());
     }
 
+    @Transactional
     public void update(UpdateAppuserDto updateAppuserDto) {
         var user = securityService.loadUserFromSecurityContext();
         var idValueObject = new AppuserId(user.getId());

@@ -4,7 +4,6 @@ import dev.felix2000jp.springboottemplate.notes.domain.Note;
 import dev.felix2000jp.springboottemplate.notes.domain.NoteRepository;
 import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.NoteId;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,19 +19,16 @@ class DefaultNoteRepository implements NoteRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Note> findAllByIdAppuserIdValue(UUID appuserIdValue) {
         return noteJpaRepository.findAllByIdAppuserIdValue(appuserIdValue);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Optional<Note> findById(NoteId id) {
         return noteJpaRepository.findById(id);
     }
 
     @Override
-    @Transactional
     public void delete(Note note) {
         noteJpaRepository.delete(note);
     }
@@ -48,7 +44,6 @@ class DefaultNoteRepository implements NoteRepository {
     }
 
     @Override
-    @Transactional
     public void save(Note note) {
         noteJpaRepository.save(note);
     }
