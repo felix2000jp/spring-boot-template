@@ -42,6 +42,16 @@ public class AppuserService {
         this.securityService = securityService;
     }
 
+    public String login() {
+        var user = securityService.loadUserFromSecurityContext();
+
+        return securityService.generateToken(
+                user.getId(),
+                user.getUsername(),
+                user.getAuthorities()
+        );
+    }
+
     @Transactional(readOnly = true)
     public AppuserDto get() {
         var user = securityService.loadUserFromSecurityContext();
@@ -112,13 +122,4 @@ public class AppuserService {
         log.info("Published AppuserDeletedEvent with appuserId {}", appuserToDelete.getId());
     }
 
-    public String login() {
-        var user = securityService.loadUserFromSecurityContext();
-
-        return securityService.generateToken(
-                user.getId(),
-                user.getUsername(),
-                user.getAuthorities()
-        );
-    }
 }
