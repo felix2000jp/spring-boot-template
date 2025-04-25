@@ -14,6 +14,7 @@ import dev.felix2000jp.springboottemplate.system.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -32,12 +33,14 @@ public class NoteService {
         this.securityService = securityService;
     }
 
+    @Transactional(readOnly = true)
     public NoteListDto get() {
         var user = securityService.loadUserFromSecurityContext();
         var notes = noteRepository.findAllByIdAppuserIdValue(user.getId());
         return noteMapper.toDto(notes);
     }
 
+    @Transactional(readOnly = true)
     public NoteDto getByNoteIdValue(UUID noteIdValue) {
         var user = securityService.loadUserFromSecurityContext();
         var noteId = new NoteId(user.getId(), noteIdValue);
@@ -49,6 +52,7 @@ public class NoteService {
         return noteMapper.toDto(note);
     }
 
+    @Transactional
     public void create(CreateNoteDto createNoteDto) {
         var user = securityService.loadUserFromSecurityContext();
 
@@ -57,6 +61,7 @@ public class NoteService {
         log.info("Note with id {} created", noteToCreate.getId());
     }
 
+    @Transactional
     public void update(UUID noteIdValue, UpdateNoteDto updateNoteDto) {
         var user = securityService.loadUserFromSecurityContext();
         var noteId = new NoteId(user.getId(), noteIdValue);
@@ -71,6 +76,7 @@ public class NoteService {
         log.info("Note with id {} updated", noteToUpdate.getId());
     }
 
+    @Transactional
     public void deleteByNoteIdValue(UUID noteIdValue) {
         var user = securityService.loadUserFromSecurityContext();
         var noteId = new NoteId(user.getId(), noteIdValue);
@@ -83,6 +89,7 @@ public class NoteService {
         log.info("Note with id {} deleted", noteToDelete.getId());
     }
 
+    @Transactional
     public void deleteAllByAppuserIdValue(UUID appuserIdValue) {
         noteRepository.deleteAllByIdAppuserIdValue(appuserIdValue);
         log.info("Notes with appuserId {} deleted", appuserIdValue);

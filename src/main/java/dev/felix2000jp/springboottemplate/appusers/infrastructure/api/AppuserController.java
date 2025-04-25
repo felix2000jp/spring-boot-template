@@ -22,6 +22,12 @@ class AppuserController {
         this.appuserService = appuserService;
     }
 
+    @PostMapping("/login")
+    ResponseEntity<String> login() {
+        var body = appuserService.login();
+        return ResponseEntity.ok(body);
+    }
+
     @GetMapping
     ResponseEntity<AppuserDto> get() {
         var body = appuserService.get();
@@ -45,12 +51,6 @@ class AppuserController {
     ResponseEntity<Void> delete() {
         appuserService.delete();
         return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/login")
-    ResponseEntity<String> login() {
-        var body = appuserService.login();
-        return ResponseEntity.ok(body);
     }
 
 }
