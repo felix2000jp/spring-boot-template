@@ -3,7 +3,6 @@ package dev.felix2000jp.springboottemplate.appusers.application;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
-import dev.felix2000jp.springboottemplate.appusers.domain.AppuserPublisher;
 import dev.felix2000jp.springboottemplate.appusers.domain.AppuserRepository;
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserNotFoundException;
@@ -30,8 +29,6 @@ class AppuserServiceTest {
 
     @Mock
     private AppuserRepository appuserRepository;
-    @Mock
-    private AppuserPublisher appuserPublisher;
     @Spy
     private AppuserMapper appuserMapper;
     @Mock
@@ -185,7 +182,6 @@ class AppuserServiceTest {
         appuserService.delete();
 
         verify(appuserRepository).delete(appuser);
-        verify(appuserPublisher).publishAppuserDeletedEvent(appuser);
     }
 
     @Test

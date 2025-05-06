@@ -1,5 +1,6 @@
 package dev.felix2000jp.springboottemplate.appusers.domain;
 
+import dev.felix2000jp.springboottemplate.appusers.domain.events.AppuserDeletedEvent;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
@@ -7,7 +8,12 @@ import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import jakarta.persistence.*;
 import org.jmolecules.ddd.types.AggregateRoot;
+import org.jmolecules.event.types.DomainEvent;
+import org.springframework.data.domain.AfterDomainEventPublication;
+import org.springframework.data.domain.DomainEvents;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +37,9 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
     @AttributeOverride(name = "value", column = @Column(name = "scope"))
     private List<Scope> scopes;
 
+    @Transient
+    private final Collection<DomainEvent> domainEvents = new ArrayList<>();
+
     protected Appuser() {
     }
 
@@ -52,11 +61,11 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
 
     @Override
     public AppuserId getId() {
-        return this.id;
+        return id;
     }
 
     public Username getUsername() {
-        return this.username;
+        return username;
     }
 
     public void setUsername(Username newUsername) {
@@ -64,7 +73,7 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
     }
 
     public Password getPassword() {
-        return this.password;
+        return password;
     }
 
     public void setPassword(Password newPassword) {
@@ -73,6 +82,21 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
 
     public List<Scope> getScopes() {
         return scopes;
+    }
+
+    public void delete() {
+        var event = new AppuserDeletedEvent(id.value());
+        domainEvents.add(event);
+    }
+
+    @DomainEvents
+    Collection<DomainEvent> getDomainEvents() {
+        return domainEvents;
+    }
+
+    @AfterDomainEventPublication
+    void clearDomainEvents() {
+        domainEvents.clear();
     }
 
 }
