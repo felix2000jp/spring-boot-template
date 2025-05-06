@@ -46,6 +46,9 @@ There is also the `RequestIdHeaderFilter` which creates a unique id for every ht
 response headers and the MDC. You use this id for correlating logs and requests. Note that this id only tracks the http
 request and therefore cannot be used for tracking the entire trace, for that purpose use the trace_id attribute.
 
+The application uses the open telemetry java agent. To download it
+go [here](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases).
+
 ## GitHub's configuration, actions and applications
 
 This GitHub repository is a template repository. It is intended to be used as a start of point for new projects. As such
