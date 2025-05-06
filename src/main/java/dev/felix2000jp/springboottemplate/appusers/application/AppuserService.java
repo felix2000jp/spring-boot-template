@@ -6,7 +6,6 @@ import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
-import dev.felix2000jp.springboottemplate.appusers.domain.AppuserPublisher;
 import dev.felix2000jp.springboottemplate.appusers.domain.AppuserRepository;
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserNotFoundException;
@@ -26,18 +25,11 @@ public class AppuserService {
     private static final Logger log = LoggerFactory.getLogger(AppuserService.class);
 
     private final AppuserRepository appuserRepository;
-    private final AppuserPublisher appuserPublisher;
     private final AppuserMapper appuserMapper;
     private final SecurityService securityService;
 
-    AppuserService(
-            AppuserRepository appuserRepository,
-            AppuserPublisher appuserPublisher,
-            AppuserMapper appuserMapper,
-            SecurityService securityService
-    ) {
+    AppuserService(AppuserRepository appuserRepository, AppuserMapper appuserMapper, SecurityService securityService) {
         this.appuserRepository = appuserRepository;
-        this.appuserPublisher = appuserPublisher;
         this.appuserMapper = appuserMapper;
         this.securityService = securityService;
     }
@@ -115,11 +107,9 @@ public class AppuserService {
                 .findById(idValueObject)
                 .orElseThrow(AppuserNotFoundException::new);
 
+        appuserToDelete.delete();
         appuserRepository.delete(appuserToDelete);
         log.info("Appuser with id {} deleted", appuserToDelete.getId());
-
-        appuserPublisher.publishAppuserDeletedEvent(appuserToDelete);
-        log.info("Published AppuserDeletedEvent with appuserId {}", appuserToDelete.getId());
     }
 
 }
