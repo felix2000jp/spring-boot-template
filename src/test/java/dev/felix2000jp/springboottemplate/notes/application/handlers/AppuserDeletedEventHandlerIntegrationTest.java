@@ -1,4 +1,4 @@
-package dev.felix2000jp.springboottemplate.notes.infrastructure.queue;
+package dev.felix2000jp.springboottemplate.notes.application.handlers;
 
 import dev.felix2000jp.springboottemplate.TestcontainersConfiguration;
 import dev.felix2000jp.springboottemplate.appusers.domain.events.AppuserDeletedEvent;
