@@ -68,16 +68,16 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
         return username;
     }
 
-    public void setUsername(Username newUsername) {
-        this.username = newUsername;
+    public void setUsername(Username username) {
+        this.username = username;
     }
 
     public Password getPassword() {
         return password;
     }
 
-    public void setPassword(Password newPassword) {
-        this.password = newPassword;
+    public void setPassword(Password password) {
+        this.password = password;
     }
 
     public List<Scope> getScopes() {
