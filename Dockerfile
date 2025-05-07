@@ -1,13 +1,14 @@
 FROM eclipse-temurin:21
 
 RUN groupadd spring && useradd -m -g spring spring
+
+ARG APP_JAR=target/*.jar
+COPY ${APP_JAR} app.jar
+
+ARG OTEL_JAR=otel/opentelemetry-javaagent.jar
+COPY ${OTEL_JAR} opentelemetry-javaagent.jar
+
 USER spring:spring
-
-ARG OTEL_VER=v2.14.0
-ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/${OTEL_VER}/opentelemetry-javaagent.jar /opentelemetry-javaagent.jar
-
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
 
 ENTRYPOINT [ \
     "java", \

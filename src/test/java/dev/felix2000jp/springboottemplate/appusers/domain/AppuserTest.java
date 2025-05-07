@@ -56,4 +56,18 @@ class AppuserTest {
         assertThat(appuser.getPassword()).isEqualTo(newPassword);
     }
 
+    @Test
+    void delete_then_add_delete_event_to_domain_events() {
+        var appuser = Appuser.from(
+                UUID.randomUUID(),
+                "username",
+                "password",
+                SecurityScope.APPLICATION
+        );
+
+        appuser.delete();
+
+        assertThat(appuser.getDomainEvents()).hasSize(1);
+    }
+
 }

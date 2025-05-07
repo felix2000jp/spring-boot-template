@@ -1,5 +1,5 @@
 services:
-  postgres:
+  database:
     image: postgres
     environment:
       POSTGRES_DB: application-db
@@ -7,9 +7,6 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - 5432:5432
-    profiles:
-      - dev
-      - prod
   grafana:
     image: grafana/otel-lgtm
     ports:
@@ -17,4 +14,4 @@ services:
       - 4318:4318
       - 3000:3000
     profiles:
-      - prod
+      - production
