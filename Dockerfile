@@ -2,11 +2,11 @@ FROM eclipse-temurin:21
 
 RUN groupadd spring && useradd -m -g spring spring
 
-ARG JAR_APP=target/*.jar
-COPY ${JAR_APP} app.jar
+ARG APP_JAR=target/*.jar
+COPY ${APP_JAR} app.jar
 
-ARG JAR_OTEL=otel/opentelemetry-javaagent.jar
-COPY ${JAR_OTEL} opentelemetry-javaagent.jar
+ARG OTEL_JAR=otel/opentelemetry-javaagent.jar
+COPY ${OTEL_JAR} opentelemetry-javaagent.jar
 
 USER spring:spring
 
