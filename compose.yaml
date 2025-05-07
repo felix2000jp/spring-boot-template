@@ -14,4 +14,4 @@ services:
       - 4318:4318
       - 3000:3000
     profiles:
-      - local-dev
+      - production
