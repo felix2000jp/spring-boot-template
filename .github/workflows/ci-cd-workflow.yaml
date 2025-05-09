@@ -85,6 +85,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           #push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           build-args: APP_JAR=*.jar
