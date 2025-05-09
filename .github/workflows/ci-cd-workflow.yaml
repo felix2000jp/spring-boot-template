@@ -84,11 +84,12 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          #push: ${{ github.ref == 'refs/heads/main' }}
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           build-args: APP_JAR=*.jar
+          provenance: false
+          platforms: linux/amd64
   deploy-application:
     if: ${{ github.ref == 'refs/heads/main' }}
     name: Deploy the application
