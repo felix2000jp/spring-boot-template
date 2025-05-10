@@ -79,12 +79,12 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: registry.digitalocean.com/${{ secrets.DO_CONTAINER_REGISTRY }}/${{ env.APPLICATION_NAME }}
-          tags: type=raw,value=${{ github.event.pull_request.head.sha || github.sha }}
+          tags: type=sha
         id: docker_meta
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           platforms: linux/amd64
