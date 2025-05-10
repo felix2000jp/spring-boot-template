@@ -20,10 +20,14 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,metrics
-  tracing:
-    sampling:
-      probability: 1.0
+        include: health
+  metrics:
+    enable:
+      all: false
+  otlp:
+    metrics:
+      export:
+        url: http://localhost:4318/v1/metrics
 
 jwt:
   rsa:
