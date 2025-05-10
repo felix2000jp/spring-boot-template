@@ -93,9 +93,8 @@ be used in other jobs.
 
 This job is dependent on [Build and Test](#build-and-test).
 
-It downloads the JAR file artifact and build a docker image with it. After building the image it pushes it to the docker
-registry. This step is configured to only actually
-push the image to the registry when it is running on main branch to avoid cluttering the registry.
+It downloads the JAR file artifact and build a docker image with it. After building the image it pushes it to the
+digital ocean registry. This step is configured to only run it is running on the main branch.
 
 #### Deploy the Application
 
