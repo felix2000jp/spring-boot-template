@@ -10,9 +10,4 @@ COPY ${OTEL_JAR} opentelemetry-javaagent.jar
 
 USER spring:spring
 
-ENTRYPOINT [ \
-    "java", \
-    "-javaagent:opentelemetry-javaagent.jar", \
-    "-Dotel.instrumentation.logback-appender.experimental.capture-mdc-attributes=*", \
-    "-jar", "app.jar" \
-]
+ENTRYPOINT [ "java", "-javaagent:opentelemetry-javaagent.jar", "-jar", "app.jar" ]
