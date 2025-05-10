@@ -31,5 +31,5 @@ management:
 
 jwt:
   rsa:
-    public-key: classpath:certificates/public.pem
-    private-key: classpath:certificates/private.pem
+    public-key: file:certs/public.pem
+    private-key: file:certs/private.pem
