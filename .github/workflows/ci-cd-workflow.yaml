@@ -59,6 +59,7 @@ jobs:
           name: ${{ env.APPLICATION_NAME }}
           if-no-files-found: error
   build-and-push-image:
+    if: ${{ github.ref == 'refs/heads/main' }}
     name: Build and push the image
     needs: [ build-and-test-code ]
     runs-on: ubuntu-latest
@@ -84,7 +85,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           platforms: linux/amd64
