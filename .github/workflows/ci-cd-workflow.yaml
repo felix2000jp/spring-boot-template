@@ -79,7 +79,7 @@ jobs:
       - name: Generate metadata
         uses: docker/metadata-action@v5
         with:
-          images: registry.digitalocean.com/${{ secrets.DO_CONTAINER_REGISTRY }}/${{ env.APPLICATION_NAME }}
+          images: ${{ secrets.DO_CONTAINER_REGISTRY }}/${{ env.APPLICATION_NAME }}
           tags: type=sha
         id: docker_meta
       - name: Build and push image
