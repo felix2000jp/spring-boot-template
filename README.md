@@ -69,36 +69,30 @@ To protect both the main branch and the git history a couple of rules are in pla
 To help with keeping the application dependencies always up to date, this repository has dependabot configured to, on a
 weekly basis open PRs with version updates for both the maven and actions dependencies used.
 
-### GitHub actions - CI CD Workflow
+### GitHub actions - CI/CD Workflow
 
 This workflow is made of 4 different jobs and its intent is to scan the code for vulnerabilities, build and test your
 changes and then to build a docker image with the resulting JAR file and push it to docker hub, finally it will deploy
 your image.
 
-#### Run Trivy Scan
+#### Build and test the code
 
 This is the **first** job in this workflow.
-
-This step runs a trivy scan on the git repository. The results are then uploaded to the GitHub security tab.
-
-#### Build and Test
-
-This job is dependent on [Run Trivy Scan](#run-trivy-scan).
 
 It sets up temurin JDK and maven and then runs the command "mvn clean verify". This command will compile the code, test
 it, package it in a JAR file and run code analysis performed by sonar. It then uploads the resulting JAR file, so it can
 be used in other jobs.
 
-#### Build and Push
+#### Build and push the image
 
-This job is dependent on [Build and Test](#build-and-test).
+This job is dependent on [Build and test the code](#build-and-test-the-code).
 
 It downloads the JAR file artifact and build a docker image with it. After building the image it pushes it to the
 digital ocean registry. This step is configured to only run it is running on the main branch.
 
 #### Deploy the Application
 
-This job is dependent on [Build and Push](#build-and-push).
+This job is dependent on [Build and push the image](#build-and-push-the-image).
 
 In this step we should make the necessary changes to deploy the application to wherever it should be deployed.
 
