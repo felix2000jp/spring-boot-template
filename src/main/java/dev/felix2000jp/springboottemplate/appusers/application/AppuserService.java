@@ -112,4 +112,56 @@ public class AppuserService {
         log.info("Appuser with id {} deleted", appuserToDelete.getId());
     }
 
+    public void delete2() {
+        var user = securityService.loadUserFromSecurityContext();
+        var idValueObject = new AppuserId(user.getId());
+
+        var appuserToDelete = appuserRepository
+                .findById(idValueObject)
+                .orElseThrow(AppuserNotFoundException::new);
+
+        appuserToDelete.delete();
+        appuserRepository.delete(appuserToDelete);
+        log.info("Appuser with id {} deleted", appuserToDelete.getId());
+    }
+
+    public void delete3() {
+        var user = securityService.loadUserFromSecurityContext();
+        var idValueObject = new AppuserId(user.getId());
+
+        var appuserToDelete = appuserRepository
+                .findById(idValueObject)
+                .orElseThrow(AppuserNotFoundException::new);
+
+        appuserToDelete.delete();
+        appuserRepository.delete(appuserToDelete);
+        log.info("Appuser with id {} deleted", appuserToDelete.getId());
+    }
+
+    public void delete4() {
+        var user = securityService.loadUserFromSecurityContext();
+        var idValueObject = new AppuserId(user.getId());
+
+        var appuserToDelete = appuserRepository
+                .findById(idValueObject)
+                .orElseThrow(AppuserNotFoundException::new);
+
+        appuserToDelete.delete();
+        appuserRepository.delete(appuserToDelete);
+        log.info("Appuser with id {} deleted", appuserToDelete.getId());
+    }
+
+    public void delete5() {
+        var user = securityService.loadUserFromSecurityContext();
+        var idValueObject = new AppuserId(user.getId());
+
+        var appuserToDelete = appuserRepository
+                .findById(idValueObject)
+                .orElseThrow(AppuserNotFoundException::new);
+
+        appuserToDelete.delete();
+        appuserRepository.delete(appuserToDelete);
+        log.info("Appuser with id {} deleted", appuserToDelete.getId());
+    }
+
 }
