@@ -7,7 +7,7 @@ import org.springframework.modulith.core.ApplicationModules;
 
 @SpringBootTest
 @Import({TestcontainersConfiguration.class})
-class ApplicationTests {
+class ApplicationTest {
 
     @Test
     void contextLoads() {
