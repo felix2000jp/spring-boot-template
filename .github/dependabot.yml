@@ -27,6 +27,3 @@ updates:
     commit-message:
       prefix: chore
       include: scope
-    groups:
-      maven:
-        patterns: ["*"]
