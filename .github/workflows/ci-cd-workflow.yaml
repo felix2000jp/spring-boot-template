@@ -1,4 +1,4 @@
-name: CI CD Workflow
+name: CI/CD workflow
 
 on:
   push:
@@ -26,6 +26,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
+
   build-and-test-code:
     name: Build and test the code
     needs: [ run-trivy-scan ]
@@ -58,8 +59,8 @@ jobs:
           path: 'target/*.jar'
           name: ${{ env.APPLICATION_NAME }}
           if-no-files-found: error
+
   build-and-push-image:
-    if: ${{ github.ref == 'refs/heads/main' }}
     name: Build and push the image
     needs: [ build-and-test-code ]
     runs-on: ubuntu-latest
@@ -85,12 +86,13 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          push: true
+          # push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           platforms: linux/amd64
           provenance: false
           build-args: APP_JAR=*.jar
+
   deploy-application:
     if: ${{ github.ref == 'refs/heads/main' }}
     name: Deploy the application
