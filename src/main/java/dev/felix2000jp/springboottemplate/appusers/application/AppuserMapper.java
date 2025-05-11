@@ -23,20 +23,4 @@ class AppuserMapper {
         );
     }
 
-    AppuserDto toDtoCopy2(Appuser appuser) {
-        return new AppuserDto(
-                appuser.getId().value(),
-                appuser.getUsername().value(),
-                appuser.getScopes().stream().map(s -> s.value().name()).toList()
-        );
-    }
-
-    AppuserDto toDtoCopy3(Appuser appuser) {
-        return new AppuserDto(
-                appuser.getId().value(),
-                appuser.getUsername().value(),
-                appuser.getScopes().stream().map(s -> s.value().name()).toList()
-        );
-    }
-
 }
