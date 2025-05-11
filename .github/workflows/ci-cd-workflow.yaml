@@ -62,12 +62,14 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.DO_CONTAINER_REGISTRY }}/${{ env.APPLICATION_NAME }}
-          tags: type=sha
+          tags: |
+            type=sha
+            type=raw,value=latest
         id: docker_meta
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          # push: ${{ github.ref == 'refs/heads/main' }}
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           platforms: linux/amd64
