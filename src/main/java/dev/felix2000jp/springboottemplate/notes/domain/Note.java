@@ -9,8 +9,6 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
 import org.jmolecules.ddd.types.AggregateRoot;
 
-import java.util.UUID;
-
 @jakarta.persistence.Table(name = "note")
 @jakarta.persistence.Entity
 public class Note implements AggregateRoot<Note, NoteId> {
@@ -37,12 +35,8 @@ public class Note implements AggregateRoot<Note, NoteId> {
         this.content = content;
     }
 
-    public static Note from(UUID appuserId, UUID noteId, String title, String content) {
-        return new Note(
-                new NoteId(appuserId, noteId),
-                new Title(title),
-                new Content(content)
-        );
+    public static Note from(NoteId id, Title title, Content content) {
+        return new Note(id, title, content);
     }
 
     @Override

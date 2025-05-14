@@ -56,7 +56,11 @@ public class NoteService {
     public void create(CreateNoteDto createNoteDto) {
         var user = securityService.loadUserFromSecurityContext();
 
-        var noteToCreate = Note.from(user.getId(), UUID.randomUUID(), createNoteDto.title(), createNoteDto.content());
+        var noteToCreate = Note.from(
+                new NoteId(user.getId(), UUID.randomUUID()),
+                new Title(createNoteDto.title()),
+                new Content(createNoteDto.content())
+        );
         noteRepository.save(noteToCreate);
         log.info("Note with id {} created", noteToCreate.getId());
     }
