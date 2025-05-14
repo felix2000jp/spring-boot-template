@@ -3,6 +3,8 @@ package dev.felix2000jp.springboottemplate.appusers.infrastructure.database;
 import dev.felix2000jp.springboottemplate.TestcontainersConfiguration;
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,9 +28,14 @@ class DefaultAppuserRepositoryIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        appuserRepository.deleteAll();
+        appuser = Appuser.from(
+                new AppuserId(UUID.randomUUID()),
+                new Username("username"),
+                new Password("password"),
+                new Scope(SecurityScope.APPLICATION)
+        );
 
-        appuser = Appuser.from(UUID.randomUUID(), "username", "password", SecurityScope.APPLICATION);
+        appuserRepository.deleteAll();
         appuserRepository.save(appuser);
     }
 
@@ -116,7 +123,12 @@ class DefaultAppuserRepositoryIntegrationTest {
 
     @Test
     void save_given_appuser_then_save_appuser() {
-        var appuserToCreate = Appuser.from(UUID.randomUUID(), "username", "password", SecurityScope.APPLICATION);
+        var appuserToCreate = Appuser.from(
+                new AppuserId(UUID.randomUUID()),
+                new Username("username"),
+                new Password("password"),
+                new Scope(SecurityScope.APPLICATION)
+        );
 
         appuserRepository.save(appuserToCreate);
 

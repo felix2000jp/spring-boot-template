@@ -9,6 +9,7 @@ import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserAlre
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import dev.felix2000jp.springboottemplate.system.security.SecurityService;
@@ -59,10 +60,10 @@ public class AppuserService {
     @Transactional
     public void create(CreateAppuserDto createAppuserDto) {
         var appuserToCreate = Appuser.from(
-                UUID.randomUUID(),
-                createAppuserDto.username(),
-                securityService.generateEncodedPassword(createAppuserDto.password()),
-                SecurityScope.APPLICATION
+                new AppuserId(UUID.randomUUID()),
+                new Username(createAppuserDto.username()),
+                new Password(securityService.generateEncodedPassword(createAppuserDto.password())),
+                new Scope(SecurityScope.APPLICATION)
         );
 
         var doesUsernameExist = appuserRepository.existsByUsername(appuserToCreate.getUsername());

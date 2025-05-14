@@ -7,6 +7,8 @@ import dev.felix2000jp.springboottemplate.appusers.domain.AppuserRepository;
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import dev.felix2000jp.springboottemplate.system.security.SecurityService;
@@ -48,10 +50,10 @@ class AppuserServiceTest {
                 SecurityScope.APPLICATION
         );
         var appuser = Appuser.from(
-                securityUser.getId(),
-                securityUser.getUsername(),
-                securityUser.getPassword(),
-                SecurityScope.APPLICATION
+                new AppuserId(securityUser.getId()),
+                new Username(securityUser.getUsername()),
+                new Password(securityUser.getPassword()),
+                new Scope(SecurityScope.APPLICATION)
         );
 
         when(securityService.loadUserFromSecurityContext()).thenReturn(securityUser);
@@ -116,10 +118,10 @@ class AppuserServiceTest {
                 SecurityScope.APPLICATION
         );
         var appuser = Appuser.from(
-                securityUser.getId(),
-                securityUser.getUsername(),
-                securityUser.getPassword(),
-                SecurityScope.APPLICATION
+                new AppuserId(securityUser.getId()),
+                new Username(securityUser.getUsername()),
+                new Password(securityUser.getPassword()),
+                new Scope(SecurityScope.APPLICATION)
         );
         var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
 
@@ -144,10 +146,10 @@ class AppuserServiceTest {
                 SecurityScope.APPLICATION
         );
         var appuser = Appuser.from(
-                securityUser.getId(),
-                securityUser.getUsername(),
-                securityUser.getPassword(),
-                SecurityScope.APPLICATION
+                new AppuserId(securityUser.getId()),
+                new Username(securityUser.getUsername()),
+                new Password(securityUser.getPassword()),
+                new Scope(SecurityScope.APPLICATION)
         );
         var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
 
@@ -170,10 +172,10 @@ class AppuserServiceTest {
                 SecurityScope.APPLICATION
         );
         var appuser = Appuser.from(
-                securityUser.getId(),
-                securityUser.getUsername(),
-                securityUser.getPassword(),
-                SecurityScope.APPLICATION
+                new AppuserId(securityUser.getId()),
+                new Username(securityUser.getUsername()),
+                new Password(securityUser.getPassword()),
+                new Scope(SecurityScope.APPLICATION)
         );
 
         when(securityService.loadUserFromSecurityContext()).thenReturn(securityUser);

@@ -1,5 +1,6 @@
 package dev.felix2000jp.springboottemplate.appusers.domain;
 
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
@@ -15,10 +16,10 @@ class AppuserTest {
     @Test
     void from_given_valid_parameters_then_create_appuser() {
         var appuser = Appuser.from(
-                UUID.randomUUID(),
-                "username",
-                "password",
-                SecurityScope.APPLICATION
+                new AppuserId(UUID.randomUUID()),
+                new Username("username"),
+                new Password("password"),
+                new Scope(SecurityScope.APPLICATION)
         );
 
         assertThat(appuser.getUsername().value()).isEqualTo("username");
@@ -29,10 +30,10 @@ class AppuserTest {
     @Test
     void setUsername_given_valid_username_then_set_username() {
         var appuser = Appuser.from(
-                UUID.randomUUID(),
-                "username",
-                "password",
-                SecurityScope.APPLICATION
+                new AppuserId(UUID.randomUUID()),
+                new Username("username"),
+                new Password("password"),
+                new Scope(SecurityScope.APPLICATION)
         );
         var newUsername = new Username("new-username");
 
@@ -44,10 +45,10 @@ class AppuserTest {
     @Test
     void setPassword_given_valid_password_then_set_password() {
         var appuser = Appuser.from(
-                UUID.randomUUID(),
-                "username",
-                "password",
-                SecurityScope.APPLICATION
+                new AppuserId(UUID.randomUUID()),
+                new Username("username"),
+                new Password("password"),
+                new Scope(SecurityScope.APPLICATION)
         );
         var newPassword = new Password("new-password");
 
@@ -59,10 +60,10 @@ class AppuserTest {
     @Test
     void delete_then_add_delete_event_to_domain_events() {
         var appuser = Appuser.from(
-                UUID.randomUUID(),
-                "username",
-                "password",
-                SecurityScope.APPLICATION
+                new AppuserId(UUID.randomUUID()),
+                new Username("username"),
+                new Password("password"),
+                new Scope(SecurityScope.APPLICATION)
         );
 
         appuser.delete();

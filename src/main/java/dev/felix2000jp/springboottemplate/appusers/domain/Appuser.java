@@ -1,11 +1,7 @@
 package dev.felix2000jp.springboottemplate.appusers.domain;
 
 import dev.felix2000jp.springboottemplate.appusers.domain.events.AppuserDeletedEvent;
-import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
-import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
-import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
-import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
-import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.*;
 import jakarta.persistence.*;
 import org.jmolecules.ddd.types.AggregateRoot;
 import org.jmolecules.event.types.DomainEvent;
@@ -15,7 +11,6 @@ import org.springframework.data.domain.DomainEvents;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 @jakarta.persistence.Table(name = "appuser")
 @jakarta.persistence.Entity
@@ -50,12 +45,12 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
         this.scopes = scopes;
     }
 
-    public static Appuser from(UUID id, String username, String password, SecurityScope initialScope) {
+    public static Appuser from(AppuserId id, Username username, Password password, Scope initialScope) {
         return new Appuser(
-                new AppuserId(id),
-                new Username(username),
-                new Password(password),
-                List.of(new Scope(initialScope))
+                id,
+                username,
+                password,
+                List.of(initialScope)
         );
     }
 

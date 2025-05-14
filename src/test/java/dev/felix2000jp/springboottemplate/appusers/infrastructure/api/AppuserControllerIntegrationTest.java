@@ -6,6 +6,9 @@ import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuse
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
 import dev.felix2000jp.springboottemplate.appusers.domain.AppuserRepository;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import dev.felix2000jp.springboottemplate.system.security.SecurityService;
@@ -44,10 +47,10 @@ class AppuserControllerIntegrationTest {
         appuserRepository.deleteAll();
 
         appuser = Appuser.from(
-                UUID.randomUUID(),
-                "username",
-                securityService.generateEncodedPassword("password"),
-                SecurityScope.APPLICATION
+                new AppuserId(UUID.randomUUID()),
+                new Username("username"),
+                new Password(securityService.generateEncodedPassword("password")),
+                new Scope(SecurityScope.APPLICATION)
         );
         appuserRepository.save(appuser);
 

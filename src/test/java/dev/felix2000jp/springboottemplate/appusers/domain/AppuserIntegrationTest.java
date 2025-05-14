@@ -2,6 +2,10 @@ package dev.felix2000jp.springboottemplate.appusers.domain;
 
 import dev.felix2000jp.springboottemplate.TestcontainersConfiguration;
 import dev.felix2000jp.springboottemplate.appusers.domain.events.AppuserDeletedEvent;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +26,12 @@ class AppuserIntegrationTest {
 
     @Test
     void delete_given_transaction_then_publish_appuser_deleted_event(Scenario scenario) {
-        var appuser = Appuser.from(UUID.randomUUID(), "username", "password", SecurityScope.APPLICATION);
+        var appuser = Appuser.from(
+                new AppuserId(UUID.randomUUID()),
+                new Username("username"),
+                new Password("password"),
+                new Scope(SecurityScope.APPLICATION)
+        );
         appuser.delete();
 
         scenario
