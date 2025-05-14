@@ -1,7 +1,10 @@
 package dev.felix2000jp.springboottemplate.appusers.domain;
 
 import dev.felix2000jp.springboottemplate.appusers.domain.events.AppuserDeletedEvent;
-import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.*;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import jakarta.persistence.*;
 import org.jmolecules.ddd.types.AggregateRoot;
 import org.jmolecules.event.types.DomainEvent;
