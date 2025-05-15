@@ -1,18 +1,17 @@
 package dev.felix2000jp.springboottemplate.appusers.infrastructure.database;
 
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
-import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
-import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-interface AppuserJpaRepository extends JpaRepository<Appuser, AppuserId> {
+interface AppuserJpaRepository extends JpaRepository<Appuser, UUID> {
 
-    Optional<Appuser> findByUsername(Username username);
+    Optional<Appuser> findByUsername(String username);
 
-    boolean existsByUsername(Username username);
+    boolean existsByUsername(String username);
 
 }

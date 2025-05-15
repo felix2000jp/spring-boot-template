@@ -1,10 +1,8 @@
 package dev.felix2000jp.springboottemplate.appusers.domain.valueobjects;
 
-import jakarta.persistence.Embeddable;
 import org.jmolecules.ddd.types.ValueObject;
 import org.springframework.util.Assert;
 
-@Embeddable
 public record Username(String value) implements ValueObject {
 
     public Username {
