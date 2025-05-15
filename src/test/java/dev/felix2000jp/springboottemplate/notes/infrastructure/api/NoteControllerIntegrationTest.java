@@ -7,6 +7,9 @@ import dev.felix2000jp.springboottemplate.notes.application.dtos.NoteListDto;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.UpdateNoteDto;
 import dev.felix2000jp.springboottemplate.notes.domain.Note;
 import dev.felix2000jp.springboottemplate.notes.domain.NoteRepository;
+import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Content;
+import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.NoteId;
+import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Title;
 import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import dev.felix2000jp.springboottemplate.system.security.SecurityService;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +46,11 @@ class NoteControllerIntegrationTest {
     void setUp() {
         noteRepository.deleteAll();
 
-        note = Note.from(UUID.randomUUID(), UUID.randomUUID(), "title", "content");
+        note = Note.from(
+                new NoteId(UUID.randomUUID(), UUID.randomUUID()),
+                new Title("title"),
+                new Content("content")
+        );
         noteRepository.save(note);
 
         var token = securityService.generateToken(

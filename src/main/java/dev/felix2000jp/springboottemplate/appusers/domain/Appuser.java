@@ -12,30 +12,25 @@ import org.jmolecules.event.types.DomainEvent;
 import org.springframework.data.domain.AfterDomainEventPublication;
 import org.springframework.data.domain.DomainEvents;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @jakarta.persistence.Table(name = "appuser")
 @jakarta.persistence.Entity
 public class Appuser implements AggregateRoot<Appuser, AppuserId> {
 
-    @EmbeddedId
-    @AttributeOverride(name = "value", column = @Column(name = "id"))
-    private AppuserId id;
+    @Id
+    @Column(name = "id")
+    private UUID id;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "username"))
-    private Username username;
+    @Column(name = "username")
+    private String username;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "password"))
-    private Password password;
+    @Column(name = "password")
+    private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @AttributeOverride(name = "value", column = @Column(name = "scope"))
-    private List<Scope> scopes;
+    @Column(name = "scope")
+    private Collection<SecurityScope> scopes;
 
     @Transient
     private final Collection<DomainEvent> domainEvents = new ArrayList<>();
@@ -44,48 +39,48 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
     }
 
     protected Appuser(AppuserId id, Username username, Password password, List<Scope> scopes) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.scopes = scopes;
+        this.id = id.value();
+        this.username = username.value();
+        this.password = password.value();
+        this.scopes = scopes.stream().map(Scope::value).toList();
     }
 
-    public static Appuser from(UUID id, String username, String password, SecurityScope initialScope) {
+    public static Appuser from(AppuserId id, Username username, Password password, Scope initialScope) {
         return new Appuser(
-                new AppuserId(id),
-                new Username(username),
-                new Password(password),
-                List.of(new Scope(initialScope))
+                id,
+                username,
+                password,
+                List.of(initialScope)
         );
     }
 
     @Override
     public AppuserId getId() {
-        return id;
+        return new AppuserId(id);
     }
 
     public Username getUsername() {
-        return username;
+        return new Username(username);
     }
 
     public void setUsername(Username username) {
-        this.username = username;
+        this.username = username.value();
     }
 
     public Password getPassword() {
-        return password;
+        return new Password(password);
     }
 
     public void setPassword(Password password) {
-        this.password = password;
+        this.password = password.value();
     }
 
     public List<Scope> getScopes() {
-        return scopes;
+        return scopes.stream().map(Scope::new).toList();
     }
 
     public void delete() {
-        var event = new AppuserDeletedEvent(id.value());
+        var event = new AppuserDeletedEvent(getId().value());
         domainEvents.add(event);
     }
 

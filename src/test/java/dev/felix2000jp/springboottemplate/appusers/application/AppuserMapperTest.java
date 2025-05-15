@@ -1,6 +1,10 @@
 package dev.felix2000jp.springboottemplate.appusers.application;
 
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
+import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +18,12 @@ class AppuserMapperTest {
 
     @Test
     void toDto_given_appuser_then_map_to_dto() {
-        var appuser = Appuser.from(UUID.randomUUID(), "username", "password", SecurityScope.APPLICATION);
-
+        var appuser = Appuser.from(
+                new AppuserId(UUID.randomUUID()),
+                new Username("username"),
+                new Password("password"),
+                new Scope(SecurityScope.APPLICATION)
+        );
         var actual = appuserMapper.toDto(appuser);
 
         assertThat(actual.id()).isEqualTo(appuser.getId().value());

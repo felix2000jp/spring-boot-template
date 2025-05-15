@@ -2,7 +2,9 @@ package dev.felix2000jp.springboottemplate.notes.infrastructure.database;
 
 import dev.felix2000jp.springboottemplate.TestcontainersConfiguration;
 import dev.felix2000jp.springboottemplate.notes.domain.Note;
+import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Content;
 import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.NoteId;
+import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Title;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,11 @@ class DefaultNoteRepositoryIntegrationTest {
     void setUp() {
         noteRepository.deleteAll();
 
-        note = Note.from(UUID.randomUUID(), UUID.randomUUID(), "title", "content");
+        note = Note.from(
+                new NoteId(UUID.randomUUID(), UUID.randomUUID()),
+                new Title("title"),
+                new Content("content")
+        );
         noteRepository.save(note);
     }
 
@@ -84,8 +90,11 @@ class DefaultNoteRepositoryIntegrationTest {
 
     @Test
     void save_given_note_then_save_note() {
-        var noteToCreate = Note.from(UUID.randomUUID(), UUID.randomUUID(), "title 1", "content 1");
-
+        var noteToCreate = Note.from(
+                new NoteId(UUID.randomUUID(), UUID.randomUUID()),
+                new Title("title 1"),
+                new Content("content 1")
+        );
         noteRepository.save(noteToCreate);
 
         var createdNote = noteRepository.findById(noteToCreate.getId());

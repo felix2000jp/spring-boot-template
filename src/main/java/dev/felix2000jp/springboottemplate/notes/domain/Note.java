@@ -3,10 +3,8 @@ package dev.felix2000jp.springboottemplate.notes.domain;
 import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Content;
 import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.NoteId;
 import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Title;
-import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Id;
 import org.jmolecules.ddd.types.AggregateRoot;
 
 import java.util.UUID;
@@ -15,54 +13,51 @@ import java.util.UUID;
 @jakarta.persistence.Entity
 public class Note implements AggregateRoot<Note, NoteId> {
 
-    @EmbeddedId
-    @AttributeOverride(name = "appuserIdValue", column = @Column(name = "appuser_id"))
-    @AttributeOverride(name = "noteIdValue", column = @Column(name = "id"))
-    private NoteId id;
+    @Id
+    @Column(name = "id")
+    private UUID id;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "title"))
-    private Title title;
+    @Column(name = "appuser_id")
+    private UUID appuserId;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "content"))
-    private Content content;
+    @Column(name = "title")
+    private String title;
+
+    @Column(name = "content")
+    private String content;
 
     protected Note() {
     }
 
-    protected Note(NoteId id, Title title, Content content) {
+    protected Note(UUID id, UUID appuserId, String title, String content) {
         this.id = id;
+        this.appuserId = appuserId;
         this.title = title;
         this.content = content;
     }
 
-    public static Note from(UUID appuserId, UUID noteId, String title, String content) {
-        return new Note(
-                new NoteId(appuserId, noteId),
-                new Title(title),
-                new Content(content)
-        );
+    public static Note from(NoteId id, Title title, Content content) {
+        return new Note(id.noteIdValue(), id.appuserIdValue(), title.value(), content.value());
     }
 
     @Override
     public NoteId getId() {
-        return id;
+        return new NoteId(appuserId, id);
     }
 
     public Title getTitle() {
-        return title;
+        return new Title(title);
     }
 
     public void setTitle(Title title) {
-        this.title = title;
+        this.title = title.value();
     }
 
     public Content getContent() {
-        return content;
+        return new Content(content);
     }
 
     public void setContent(Content content) {
-        this.content = content;
+        this.content = content.value();
     }
 }

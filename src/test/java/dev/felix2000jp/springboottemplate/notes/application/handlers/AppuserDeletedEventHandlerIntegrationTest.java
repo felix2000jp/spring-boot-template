@@ -4,6 +4,9 @@ import dev.felix2000jp.springboottemplate.TestcontainersConfiguration;
 import dev.felix2000jp.springboottemplate.appusers.domain.events.AppuserDeletedEvent;
 import dev.felix2000jp.springboottemplate.notes.domain.Note;
 import dev.felix2000jp.springboottemplate.notes.domain.NoteRepository;
+import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Content;
+import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.NoteId;
+import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Title;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
@@ -28,9 +31,21 @@ class AppuserDeletedEventHandlerIntegrationTest {
         var appuserId = UUID.randomUUID();
         var appuserDeletedEvent = new AppuserDeletedEvent(appuserId);
 
-        var note1 = Note.from(appuserId, UUID.randomUUID(), "title 1", "content 1");
-        var note2 = Note.from(appuserId, UUID.randomUUID(), "title 2", "content 2");
-        var note3 = Note.from(UUID.randomUUID(), UUID.randomUUID(), "title 3", "content 3");
+        var note1 = Note.from(
+                new NoteId(appuserId, UUID.randomUUID()),
+                new Title("title 1"),
+                new Content("content 1")
+        );
+        var note2 = Note.from(
+                new NoteId(appuserId, UUID.randomUUID()),
+                new Title("title 2"),
+                new Content("content 2")
+        );
+        var note3 = Note.from(
+                new NoteId(UUID.randomUUID(), UUID.randomUUID()),
+                new Title("title 3"),
+                new Content("content 3")
+        );
 
         noteRepository.save(note1);
         noteRepository.save(note2);

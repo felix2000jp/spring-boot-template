@@ -5,6 +5,9 @@ import dev.felix2000jp.springboottemplate.notes.application.dtos.UpdateNoteDto;
 import dev.felix2000jp.springboottemplate.notes.domain.Note;
 import dev.felix2000jp.springboottemplate.notes.domain.NoteRepository;
 import dev.felix2000jp.springboottemplate.notes.domain.exceptions.NoteNotFoundException;
+import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Content;
+import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.NoteId;
+import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Title;
 import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import dev.felix2000jp.springboottemplate.system.security.SecurityService;
 import dev.felix2000jp.springboottemplate.system.security.SecurityUser;
@@ -49,7 +52,11 @@ class NoteServiceTest {
 
     @Test
     void get_given_user_then_return_list_of_notes() {
-        var note = Note.from(user.getId(), UUID.randomUUID(), "title", "content");
+        var note = Note.from(
+                new NoteId(user.getId(), UUID.randomUUID()),
+                new Title("title"),
+                new Content("content")
+        );
 
         when(noteRepository.findAllByIdAppuserIdValue(user.getId())).thenReturn(List.of(note));
 
@@ -73,7 +80,11 @@ class NoteServiceTest {
 
     @Test
     void getByNoteIdValue_given_note_id_then_return_note() {
-        var note = Note.from(user.getId(), UUID.randomUUID(), "title", "content");
+        var note = Note.from(
+                new NoteId(user.getId(), UUID.randomUUID()),
+                new Title("title"),
+                new Content("content")
+        );
 
         when(noteRepository.findById(note.getId())).thenReturn(Optional.of(note));
 
@@ -86,7 +97,11 @@ class NoteServiceTest {
 
     @Test
     void getByNoteIdValue_given_not_found_id_then_throw_exception() {
-        var note = Note.from(user.getId(), UUID.randomUUID(), "title", "content");
+        var note = Note.from(
+                new NoteId(user.getId(), UUID.randomUUID()),
+                new Title("title"),
+                new Content("content")
+        );
         var noteIdValue = note.getId().noteIdValue();
 
         when(noteRepository.findById(note.getId())).thenReturn(Optional.empty());
@@ -109,7 +124,11 @@ class NoteServiceTest {
 
     @Test
     void update_given_id_and_dto_then_update_note() {
-        var note = Note.from(user.getId(), UUID.randomUUID(), "title", "content");
+        var note = Note.from(
+                new NoteId(user.getId(), UUID.randomUUID()),
+                new Title("title"),
+                new Content("content")
+        );
         var updateNoteDto = new UpdateNoteDto("new title", "new content");
 
         when(noteRepository.findById(note.getId())).thenReturn(Optional.of(note));
@@ -123,7 +142,11 @@ class NoteServiceTest {
 
     @Test
     void update_given_not_found_id_and_dto_then_exception() {
-        var note = Note.from(user.getId(), UUID.randomUUID(), "title", "content");
+        var note = Note.from(
+                new NoteId(user.getId(), UUID.randomUUID()),
+                new Title("title"),
+                new Content("content")
+        );
         var noteIdValue = note.getId().noteIdValue();
         var updateNoteDto = new UpdateNoteDto("new title", "new content");
 
@@ -136,7 +159,11 @@ class NoteServiceTest {
 
     @Test
     void deleteByNoteIdValue_given_note_id_then_delete_note() {
-        var note = Note.from(user.getId(), UUID.randomUUID(), "title", "content");
+        var note = Note.from(
+                new NoteId(user.getId(), UUID.randomUUID()),
+                new Title("title"),
+                new Content("content")
+        );
 
         when(noteRepository.findById(note.getId())).thenReturn(Optional.of(note));
 
@@ -148,7 +175,11 @@ class NoteServiceTest {
 
     @Test
     void deleteByNoteIdValue_given_not_found_id_then_throw_exception() {
-        var note = Note.from(user.getId(), UUID.randomUUID(), "title", "content");
+        var note = Note.from(
+                new NoteId(user.getId(), UUID.randomUUID()),
+                new Title("title"),
+                new Content("content")
+        );
         var noteIdValue = note.getId().noteIdValue();
 
         when(noteRepository.findById(note.getId())).thenReturn(Optional.empty());
