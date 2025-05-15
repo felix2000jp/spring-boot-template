@@ -20,12 +20,12 @@ class DefaultNoteRepository implements NoteRepository {
 
     @Override
     public List<Note> findAllByIdAppuserIdValue(UUID appuserIdValue) {
-        return noteJpaRepository.findAllByIdAppuserIdValue(appuserIdValue);
+        return noteJpaRepository.findAllByAppuserId(appuserIdValue);
     }
 
     @Override
     public Optional<Note> findById(NoteId id) {
-        return noteJpaRepository.findById(id);
+        return noteJpaRepository.findByIdAndAppuserId(id.noteIdValue(), id.appuserIdValue());
     }
 
     @Override
@@ -40,7 +40,7 @@ class DefaultNoteRepository implements NoteRepository {
 
     @Override
     public void deleteAllByIdAppuserIdValue(UUID appuserIdValue) {
-        noteJpaRepository.deleteAllByIdAppuserIdValue(appuserIdValue);
+        noteJpaRepository.deleteAllByAppuserId(appuserIdValue);
     }
 
     @Override

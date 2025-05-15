@@ -6,13 +6,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
 interface NoteJpaRepository extends JpaRepository<Note, NoteId> {
 
-    List<Note> findAllByIdAppuserIdValue(UUID appuserId);
+    List<Note> findAllByAppuserId(UUID appuserId);
 
-    void deleteAllByIdAppuserIdValue(UUID appuserId);
+    Optional<Note> findByIdAndAppuserId(UUID id, UUID appuserId);
+
+    void deleteAllByAppuserId(UUID appuserId);
 
 }
