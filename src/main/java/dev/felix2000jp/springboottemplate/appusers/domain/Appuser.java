@@ -38,19 +38,15 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
     protected Appuser() {
     }
 
-    protected Appuser(AppuserId id, Username username, Password password, List<Scope> scopes) {
-        this.id = id.value();
-        this.username = username.value();
-        this.password = password.value();
-        this.scopes = scopes.stream().map(Scope::value).toList();
+    protected Appuser(UUID id, String username, String password, List<SecurityScope> scopes) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.scopes = scopes;
     }
 
     public static Appuser from(AppuserId id, Username username, Password password, Scope initialScope) {
-        return new Appuser(
-                id,
-                username,
-                password,
-                List.of(initialScope)
+        return new Appuser(id.value(), username.value(), password.value(), List.of(initialScope.value())
         );
     }
 
