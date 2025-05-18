@@ -19,22 +19,22 @@ class DefaultAppuserRepository implements AppuserRepository {
 
     @Override
     public Optional<Appuser> findById(AppuserId id) {
-        return appuserJpaRepository.findById(id.value());
+        return appuserJpaRepository.findById(id);
     }
 
     @Override
     public boolean existsById(AppuserId id) {
-        return appuserJpaRepository.existsById(id.value());
+        return appuserJpaRepository.existsById(id);
     }
 
     @Override
     public Optional<Appuser> findByUsername(Username username) {
-        return appuserJpaRepository.findByUsername(username.value());
+        return appuserJpaRepository.findByUsername(username);
     }
 
     @Override
     public boolean existsByUsername(Username username) {
-        return appuserJpaRepository.existsByUsername(username.value());
+        return appuserJpaRepository.existsByUsername(username);
     }
 
     @Override
