@@ -1,5 +1,6 @@
 package dev.felix2000jp.springboottemplate.notes.infrastructure.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.felix2000jp.springboottemplate.notes.application.NoteService;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.CreateNoteDto;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.NoteDto;
@@ -35,17 +36,15 @@ class NoteControllerTest {
     private NoteService noteService;
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void get_then_return_200_and_notes() throws Exception {
         var noteDto = new NoteDto(UUID.randomUUID(), "title", "content");
         var noteListDto = new NoteListDto(1, List.of(noteDto));
 
-        var expectedResponse = String.format("""
-                {
-                    "notes": [{ "id": "%s", "title": "%s", "content": "%s" }]
-                }
-                """, noteDto.id(), noteDto.title(), noteDto.content());
+        var expectedResponse = objectMapper.writeValueAsString(noteListDto);
 
         when(noteService.get()).thenReturn(noteListDto);
 
@@ -59,13 +58,7 @@ class NoteControllerTest {
     @Test
     void getByNoteIdValue_given_id_then_return_200_and_note() throws Exception {
         var noteDto = new NoteDto(UUID.randomUUID(), "title", "content");
-        var expectedResponse = String.format("""
-                {
-                    "id": "%s",
-                    "title": "%s",
-                    "content": "%s"
-                }
-                """, noteDto.id(), noteDto.title(), noteDto.content());
+        var expectedResponse = objectMapper.writeValueAsString(noteDto);
 
         when(noteService.getByNoteIdValue(noteDto.id())).thenReturn(noteDto);
 
@@ -95,9 +88,7 @@ class NoteControllerTest {
         var noteDto = new NoteDto(UUID.randomUUID(), "title", "content");
         var createNoteDto = new CreateNoteDto(noteDto.title(), noteDto.content());
 
-        var body = String.format("""
-                { "title": "%s", "content": "%s" }
-                """, createNoteDto.title(), createNoteDto.content());
+        var body = objectMapper.writeValueAsString(createNoteDto);
 
         var request = post("/api/notes").contentType(MediaType.APPLICATION_JSON).content(body);
         mockMvc
@@ -137,9 +128,7 @@ class NoteControllerTest {
         var noteDto = new NoteDto(UUID.randomUUID(), "title", "content");
         var updateNoteDto = new UpdateNoteDto(noteDto.title(), noteDto.content());
 
-        var body = String.format("""
-                { "title": "%s", "content": "%s" }
-                """, updateNoteDto.title(), updateNoteDto.content());
+        var body = objectMapper.writeValueAsString(updateNoteDto);
 
         var request = put("/api/notes/" + noteDto.id()).contentType(MediaType.APPLICATION_JSON).content(body);
         mockMvc
@@ -152,9 +141,7 @@ class NoteControllerTest {
         var id = UUID.randomUUID();
         var updateNoteDto = new UpdateNoteDto("title", "content");
 
-        var body = String.format("""
-                { "title": "%s", "content": "%s" }
-                """, updateNoteDto.title(), updateNoteDto.content());
+        var body = objectMapper.writeValueAsString(updateNoteDto);
 
         var exception = new NoteNotFoundException();
         doThrow(exception).when(noteService).update(id, updateNoteDto);
