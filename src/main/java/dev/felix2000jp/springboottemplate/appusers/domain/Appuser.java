@@ -10,6 +10,7 @@ import org.jmolecules.ddd.types.AggregateRoot;
 import org.jmolecules.event.types.DomainEvent;
 import org.springframework.data.domain.AfterDomainEventPublication;
 import org.springframework.data.domain.DomainEvents;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,8 +50,12 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
     }
 
     public static Appuser from(AppuserId id, Username username, Password password, Scope initialScope) {
-        return new Appuser(id, username, password, List.of(initialScope)
-        );
+        Assert.notNull(id, "id must not be null");
+        Assert.notNull(username, "username must not be null");
+        Assert.notNull(password, "password must not be null");
+        Assert.notNull(initialScope, "initialScope must not be null");
+
+        return new Appuser(id, username, password, List.of(initialScope));
     }
 
     @Override

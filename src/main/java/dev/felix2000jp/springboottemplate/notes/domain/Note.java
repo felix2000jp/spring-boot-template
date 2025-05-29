@@ -6,6 +6,7 @@ import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Title;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import org.jmolecules.ddd.types.AggregateRoot;
+import org.springframework.util.Assert;
 
 import java.util.UUID;
 
@@ -37,6 +38,10 @@ public class Note implements AggregateRoot<Note, NoteId> {
     }
 
     public static Note from(NoteId id, Title title, Content content) {
+        Assert.notNull(id, "id must not be null");
+        Assert.notNull(title, "title must not be null");
+        Assert.notNull(content, "content must not be null");
+
         return new Note(id.noteIdValue(), id.appuserIdValue(), title.value(), content.value());
     }
 
