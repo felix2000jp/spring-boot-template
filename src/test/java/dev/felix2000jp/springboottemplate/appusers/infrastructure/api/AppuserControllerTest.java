@@ -1,5 +1,6 @@
 package dev.felix2000jp.springboottemplate.appusers.infrastructure.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.felix2000jp.springboottemplate.appusers.application.AppuserService;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuserDto;
@@ -34,6 +35,8 @@ class AppuserControllerTest {
     private AppuserService appuserService;
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     void get_then_return_200_and_appuser() throws Exception {
@@ -43,9 +46,7 @@ class AppuserControllerTest {
                 List.of("APPLICATION")
         );
 
-        var expectedResponse = String.format("""
-                { "id": "%s", "username": "%s", "scopes": ["%s"] }
-                """, appuserDto.id(), appuserDto.username(), appuserDto.scopes().getFirst());
+        var expectedResponse = objectMapper.writeValueAsString(appuserDto);
 
         when(appuserService.get()).thenReturn(appuserDto);
 
@@ -74,9 +75,7 @@ class AppuserControllerTest {
     void create_then_return_201_and_location_header() throws Exception {
         var createAppuserDto = new CreateAppuserDto("username", "password");
 
-        var body = String.format("""
-                { "username": "%s", "password": "%s" }
-                """, createAppuserDto.username(), createAppuserDto.password());
+        var body = objectMapper.writeValueAsString(createAppuserDto);
 
         var request = post("/api/appusers").contentType(MediaType.APPLICATION_JSON).content(body);
         mockMvc
@@ -89,9 +88,7 @@ class AppuserControllerTest {
     void create_given_duplicate_username_then_return_409() throws Exception {
         var createAppuserDto = new CreateAppuserDto("username", "password");
 
-        var body = String.format("""
-                { "username": "%s", "password": "%s" }
-                """, createAppuserDto.username(), createAppuserDto.password());
+        var body = objectMapper.writeValueAsString(createAppuserDto);
 
         var exception = new AppuserAlreadyExistsException();
         doThrow(exception).when(appuserService).create(createAppuserDto);
@@ -138,9 +135,7 @@ class AppuserControllerTest {
     void update_then_return_204() throws Exception {
         var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
 
-        var body = String.format("""
-                { "username": "%s", "password": "%s" }
-                """, updateAppuserDto.username(), updateAppuserDto.password());
+        var body = objectMapper.writeValueAsString(updateAppuserDto);
 
         var request = put("/api/appusers").contentType(MediaType.APPLICATION_JSON).content(body);
         mockMvc
@@ -152,9 +147,7 @@ class AppuserControllerTest {
     void update_given_duplicate_username_then_return_409() throws Exception {
         var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
 
-        var body = String.format("""
-                { "username": "%s", "password": "%s" }
-                """, updateAppuserDto.username(), updateAppuserDto.password());
+        var body = objectMapper.writeValueAsString(updateAppuserDto);
 
         var exception = new AppuserAlreadyExistsException();
         doThrow(exception).when(appuserService).update(updateAppuserDto);
