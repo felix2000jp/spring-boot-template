@@ -40,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: 'target/*.jar'
-          name: ${{ env.APPLICATION_NAME }}
+          name: app.jar
           if-no-files-found: error
   build-and-push-image:
     name: Build and push the image
@@ -50,7 +50,7 @@ jobs:
       - name: Download JAR file artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.APPLICATION_NAME }}
+          name: app.jar
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to the registry
@@ -73,7 +73,7 @@ jobs:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          build-args: APP_JAR=*.jar
+          build-args: APP_JAR=app.jar
   deploy-application:
     if: ${{ github.ref == 'refs/heads/main' }}
     name: Deploy the application
