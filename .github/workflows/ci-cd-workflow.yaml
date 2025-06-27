@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY_NAME: ghcr.io
-  APPLICATION_NAME: spring-boot-template
+  APPLICATION_NAME: ${{ github.repository }}
 
 jobs:
   build-and-test-code:
@@ -63,7 +63,7 @@ jobs:
         uses: docker/metadata-action@v5
         id: docker_meta
         with:
-          images: ${{ env.REGISTRY_NAME }}/${{ github.repository }}
+          images: ${{ env.REGISTRY_NAME }}/${{ env.APPLICATION_NAME }}
           tags: |
             type=sha
             type=raw,value=latest
