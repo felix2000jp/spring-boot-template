@@ -61,7 +61,7 @@ jobs:
       - name: Generate metadata
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.APPLICATION_NAME }}
+          images: ghcr.io/${{ env.APPLICATION_NAME }}
           tags: |
             type=sha
             type=raw,value=latest
