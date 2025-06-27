@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main ]
 
+permissions:
+  packages: write
+
 env:
   APPLICATION_NAME: spring-boot-template
 
