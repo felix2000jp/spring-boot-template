@@ -10,6 +10,7 @@ permissions:
   packages: write
 
 env:
+  REGISTRY_NAME: ghcr.io
   APPLICATION_NAME: spring-boot-template
 
 jobs:
@@ -58,13 +59,13 @@ jobs:
       - name: Login to github container registry
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY_NAME }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate metadata
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.APPLICATION_NAME }}
+          images: ${{ env.REGISTRY_NAME }}/${{ env.APPLICATION_NAME }}
           tags: |
             type=sha
             type=raw,value=latest
