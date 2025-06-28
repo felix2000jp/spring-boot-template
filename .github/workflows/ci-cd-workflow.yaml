@@ -73,7 +73,7 @@ jobs:
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          build-args: APP_JAR=app.jar
+          build-args: APP_JAR=*.jar
   deploy-application:
     if: ${{ github.ref == 'refs/heads/main' }}
     name: Deploy the application
