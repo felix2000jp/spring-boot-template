@@ -74,6 +74,8 @@ jobs:
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           build-args: APP_JAR=*.jar
+      - name: test
+        run: ls -a
   deploy-application:
     if: ${{ github.ref == 'refs/heads/main' }}
     name: Deploy the application
