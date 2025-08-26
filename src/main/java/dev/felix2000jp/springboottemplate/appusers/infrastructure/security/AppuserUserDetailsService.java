@@ -5,6 +5,7 @@ import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserNotF
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.system.security.SecurityUser;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ class AppuserUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public SecurityUser loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var usernameValueObject = new Username(username);
 
         var appuser = appuserService
