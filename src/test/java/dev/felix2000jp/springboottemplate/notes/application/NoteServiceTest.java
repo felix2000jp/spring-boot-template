@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +46,7 @@ class NoteServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = new SecurityUser(UUID.randomUUID(), "username", "password", SecurityScope.APPLICATION);
+        user = new SecurityUser(UUID.randomUUID(), "username", "password", Set.of(SecurityScope.APPLICATION));
 
         when(securityService.loadUserFromSecurityContext()).thenReturn(user);
     }
@@ -53,12 +54,12 @@ class NoteServiceTest {
     @Test
     void get_given_user_then_return_list_of_notes() {
         var note = Note.from(
-                new NoteId(user.getId(), UUID.randomUUID()),
+                new NoteId(user.id(), UUID.randomUUID()),
                 new Title("title"),
                 new Content("content")
         );
 
-        when(noteRepository.findAllByIdAppuserIdValue(user.getId())).thenReturn(List.of(note));
+        when(noteRepository.findAllByIdAppuserIdValue(user.id())).thenReturn(List.of(note));
 
         var actual = noteService.get();
         var actualNote = actual.notes().getFirst();
@@ -71,7 +72,7 @@ class NoteServiceTest {
 
     @Test
     void get_given_user_without_notes_then_return_empty_list_of_notes() {
-        when(noteRepository.findAllByIdAppuserIdValue(user.getId())).thenReturn(List.of());
+        when(noteRepository.findAllByIdAppuserIdValue(user.id())).thenReturn(List.of());
 
         var actual = noteService.get();
 
@@ -81,7 +82,7 @@ class NoteServiceTest {
     @Test
     void getByNoteIdValue_given_note_id_then_return_note() {
         var note = Note.from(
-                new NoteId(user.getId(), UUID.randomUUID()),
+                new NoteId(user.id(), UUID.randomUUID()),
                 new Title("title"),
                 new Content("content")
         );
@@ -98,7 +99,7 @@ class NoteServiceTest {
     @Test
     void getByNoteIdValue_given_not_found_id_then_throw_exception() {
         var note = Note.from(
-                new NoteId(user.getId(), UUID.randomUUID()),
+                new NoteId(user.id(), UUID.randomUUID()),
                 new Title("title"),
                 new Content("content")
         );
@@ -125,7 +126,7 @@ class NoteServiceTest {
     @Test
     void update_given_id_and_dto_then_update_note() {
         var note = Note.from(
-                new NoteId(user.getId(), UUID.randomUUID()),
+                new NoteId(user.id(), UUID.randomUUID()),
                 new Title("title"),
                 new Content("content")
         );
@@ -143,7 +144,7 @@ class NoteServiceTest {
     @Test
     void update_given_not_found_id_and_dto_then_exception() {
         var note = Note.from(
-                new NoteId(user.getId(), UUID.randomUUID()),
+                new NoteId(user.id(), UUID.randomUUID()),
                 new Title("title"),
                 new Content("content")
         );
@@ -160,7 +161,7 @@ class NoteServiceTest {
     @Test
     void deleteByNoteIdValue_given_note_id_then_delete_note() {
         var note = Note.from(
-                new NoteId(user.getId(), UUID.randomUUID()),
+                new NoteId(user.id(), UUID.randomUUID()),
                 new Title("title"),
                 new Content("content")
         );
@@ -176,7 +177,7 @@ class NoteServiceTest {
     @Test
     void deleteByNoteIdValue_given_not_found_id_then_throw_exception() {
         var note = Note.from(
-                new NoteId(user.getId(), UUID.randomUUID()),
+                new NoteId(user.id(), UUID.randomUUID()),
                 new Title("title"),
                 new Content("content")
         );

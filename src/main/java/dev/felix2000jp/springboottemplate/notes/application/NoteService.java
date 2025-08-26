@@ -36,14 +36,14 @@ public class NoteService {
     @Transactional(readOnly = true)
     public NoteListDto get() {
         var user = securityService.loadUserFromSecurityContext();
-        var notes = noteRepository.findAllByIdAppuserIdValue(user.getId());
+        var notes = noteRepository.findAllByIdAppuserIdValue(user.id());
         return noteMapper.toDto(notes);
     }
 
     @Transactional(readOnly = true)
     public NoteDto getByNoteIdValue(UUID noteIdValue) {
         var user = securityService.loadUserFromSecurityContext();
-        var noteId = new NoteId(user.getId(), noteIdValue);
+        var noteId = new NoteId(user.id(), noteIdValue);
 
         var note = noteRepository
                 .findById(noteId)
@@ -57,7 +57,7 @@ public class NoteService {
         var user = securityService.loadUserFromSecurityContext();
 
         var noteToCreate = Note.from(
-                new NoteId(user.getId(), UUID.randomUUID()),
+                new NoteId(user.id(), UUID.randomUUID()),
                 new Title(createNoteDto.title()),
                 new Content(createNoteDto.content())
         );
@@ -68,7 +68,7 @@ public class NoteService {
     @Transactional
     public void update(UUID noteIdValue, UpdateNoteDto updateNoteDto) {
         var user = securityService.loadUserFromSecurityContext();
-        var noteId = new NoteId(user.getId(), noteIdValue);
+        var noteId = new NoteId(user.id(), noteIdValue);
 
         var noteToUpdate = noteRepository
                 .findById(noteId)
@@ -83,7 +83,7 @@ public class NoteService {
     @Transactional
     public void deleteByNoteIdValue(UUID noteIdValue) {
         var user = securityService.loadUserFromSecurityContext();
-        var noteId = new NoteId(user.getId(), noteIdValue);
+        var noteId = new NoteId(user.id(), noteIdValue);
 
         var noteToDelete = noteRepository
                 .findById(noteId)

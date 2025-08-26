@@ -3,9 +3,7 @@ package dev.felix2000jp.springboottemplate.appusers.application;
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
-import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
-import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -21,14 +19,15 @@ class AppuserMapperTest {
         var appuser = Appuser.from(
                 new AppuserId(UUID.randomUUID()),
                 new Username("username"),
-                new Password("password"),
-                new Scope(SecurityScope.APPLICATION)
+                new Password("password")
         );
+        appuser.addApplicationScope();
+
         var actual = appuserMapper.toDto(appuser);
 
         assertThat(actual.id()).isEqualTo(appuser.getId().value());
         assertThat(actual.username()).isEqualTo(appuser.getUsername().value());
-        assertThat(actual.scopes()).contains(SecurityScope.APPLICATION.name());
+        assertThat(actual.scopes()).contains("APPLICATION");
     }
 
 }

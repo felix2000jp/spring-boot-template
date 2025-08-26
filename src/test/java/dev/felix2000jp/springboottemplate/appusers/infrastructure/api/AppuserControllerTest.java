@@ -40,12 +40,7 @@ class AppuserControllerTest {
 
     @Test
     void get_then_return_200_and_appuser() throws Exception {
-        var appuserDto = new AppuserDto(
-                UUID.randomUUID(),
-                "username",
-                List.of("APPLICATION")
-        );
-
+        var appuserDto = new AppuserDto(UUID.randomUUID(), "username", List.of("APPLICATION"));
         var expectedResponse = objectMapper.writeValueAsString(appuserDto);
 
         when(appuserService.get()).thenReturn(appuserDto);

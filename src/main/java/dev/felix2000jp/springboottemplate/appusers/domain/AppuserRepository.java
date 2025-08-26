@@ -10,8 +10,6 @@ public interface AppuserRepository extends Repository<Appuser, AppuserId> {
 
     Optional<Appuser> findById(AppuserId id);
 
-    boolean existsById(AppuserId id);
-
     Optional<Appuser> findByUsername(Username username);
 
     boolean existsByUsername(Username username);

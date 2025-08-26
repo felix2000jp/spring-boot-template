@@ -4,9 +4,7 @@ import dev.felix2000jp.springboottemplate.TestcontainersConfiguration;
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
-import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
-import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +29,7 @@ class DefaultAppuserRepositoryIntegrationTest {
         appuser = Appuser.from(
                 new AppuserId(UUID.randomUUID()),
                 new Username("username"),
-                new Password("password"),
-                new Scope(SecurityScope.APPLICATION)
+                new Password("password")
         );
 
         appuserRepository.deleteAll();
@@ -53,22 +50,6 @@ class DefaultAppuserRepositoryIntegrationTest {
         var actual = appuserRepository.findById(idValueObject);
 
         assertThat(actual).isNotPresent();
-    }
-
-    @Test
-    void existsById_given_id_of_appuser_then_return_true() {
-        var idValueObject = appuser.getId();
-        var actual = appuserRepository.existsById(idValueObject);
-
-        assertThat(actual).isTrue();
-    }
-
-    @Test
-    void existsById_given_not_found_id_then_return_false() {
-        var idValueObject = new AppuserId(UUID.randomUUID());
-        var actual = appuserRepository.existsById(idValueObject);
-
-        assertThat(actual).isFalse();
     }
 
     @Test
@@ -108,8 +89,8 @@ class DefaultAppuserRepositoryIntegrationTest {
         appuserRepository.delete(appuser);
 
         var idValueObject = appuser.getId();
-        var doesAppuserExist = appuserRepository.existsById(idValueObject);
-        assertThat(doesAppuserExist).isFalse();
+        var deletedAppuser = appuserRepository.findById(idValueObject);
+        assertThat(deletedAppuser).isNotPresent();
     }
 
     @Test
@@ -117,8 +98,8 @@ class DefaultAppuserRepositoryIntegrationTest {
         appuserRepository.deleteAll();
 
         var idValueObject = appuser.getId();
-        var doesAppuserExist = appuserRepository.existsById(idValueObject);
-        assertThat(doesAppuserExist).isFalse();
+        var deletedAppuser = appuserRepository.findById(idValueObject);
+        assertThat(deletedAppuser).isNotPresent();
     }
 
     @Test
@@ -126,15 +107,14 @@ class DefaultAppuserRepositoryIntegrationTest {
         var appuserToCreate = Appuser.from(
                 new AppuserId(UUID.randomUUID()),
                 new Username("username"),
-                new Password("password"),
-                new Scope(SecurityScope.APPLICATION)
+                new Password("password")
         );
 
         appuserRepository.save(appuserToCreate);
 
         var idValueObject = appuserToCreate.getId();
         var createdAppuser = appuserRepository.findById(idValueObject);
-        assertThat(createdAppuser).isNotNull();
+        assertThat(createdAppuser).isPresent();
     }
 
 }

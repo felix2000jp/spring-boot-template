@@ -8,7 +8,6 @@ import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
 import dev.felix2000jp.springboottemplate.appusers.domain.AppuserRepository;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
-import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
 import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import dev.felix2000jp.springboottemplate.system.security.SecurityService;
@@ -49,9 +48,10 @@ class AppuserControllerIntegrationTest {
         appuser = Appuser.from(
                 new AppuserId(UUID.randomUUID()),
                 new Username("username"),
-                new Password(securityService.generateEncodedPassword("password")),
-                new Scope(SecurityScope.APPLICATION)
+                new Password(securityService.generateEncodedPassword("password"))
         );
+        appuser.addApplicationScope();
+
         appuserRepository.save(appuser);
 
         var token = securityService.generateToken(
