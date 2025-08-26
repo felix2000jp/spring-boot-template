@@ -4,7 +4,6 @@ import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
-import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -18,13 +17,12 @@ class AppuserTest {
         var appuser = Appuser.from(
                 new AppuserId(UUID.randomUUID()),
                 new Username("username"),
-                new Password("password"),
-                new Scope(SecurityScope.APPLICATION)
+                new Password("password")
         );
 
         assertThat(appuser.getUsername().value()).isEqualTo("username");
         assertThat(appuser.getPassword().value()).isEqualTo("password");
-        assertThat(appuser.getScopes()).contains(new Scope(SecurityScope.APPLICATION));
+        assertThat(appuser.getScopes()).isEmpty();
     }
 
     @Test
@@ -32,8 +30,7 @@ class AppuserTest {
         var appuser = Appuser.from(
                 new AppuserId(UUID.randomUUID()),
                 new Username("username"),
-                new Password("password"),
-                new Scope(SecurityScope.APPLICATION)
+                new Password("password")
         );
         var newUsername = new Username("new-username");
 
@@ -47,8 +44,7 @@ class AppuserTest {
         var appuser = Appuser.from(
                 new AppuserId(UUID.randomUUID()),
                 new Username("username"),
-                new Password("password"),
-                new Scope(SecurityScope.APPLICATION)
+                new Password("password")
         );
         var newPassword = new Password("new-password");
 
@@ -58,12 +54,24 @@ class AppuserTest {
     }
 
     @Test
+    void addApplicationScope_then_add_application_scope() {
+        var appuser = Appuser.from(
+                new AppuserId(UUID.randomUUID()),
+                new Username("username"),
+                new Password("password")
+        );
+        appuser.addApplicationScope();
+
+        assertThat(appuser.getScopes()).hasSize(1);
+        assertThat(appuser.getScopes()).contains(new Scope("APPLICATION"));
+    }
+
+    @Test
     void delete_then_add_delete_event_to_domain_events() {
         var appuser = Appuser.from(
                 new AppuserId(UUID.randomUUID()),
                 new Username("username"),
-                new Password("password"),
-                new Scope(SecurityScope.APPLICATION)
+                new Password("password")
         );
 
         appuser.delete();

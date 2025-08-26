@@ -8,9 +8,7 @@ import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserAlre
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
-import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
-import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import dev.felix2000jp.springboottemplate.system.security.SecurityService;
 import dev.felix2000jp.springboottemplate.system.security.SecurityUser;
 import org.junit.jupiter.api.Test;
@@ -19,6 +17,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,17 +42,11 @@ class AppuserServiceTest {
 
     @Test
     void get_then_return_appuser_dto() {
-        var securityUser = new SecurityUser(
-                UUID.randomUUID(),
-                "username",
-                "password",
-                SecurityScope.APPLICATION
-        );
+        var securityUser = new SecurityUser(UUID.randomUUID(), "username", "password", Set.of());
         var appuser = Appuser.from(
-                new AppuserId(securityUser.getId()),
-                new Username(securityUser.getUsername()),
-                new Password(securityUser.getPassword()),
-                new Scope(SecurityScope.APPLICATION)
+                new AppuserId(securityUser.id()),
+                new Username(securityUser.username()),
+                new Password(securityUser.password())
         );
 
         when(securityService.loadUserFromSecurityContext()).thenReturn(securityUser);
@@ -67,19 +60,12 @@ class AppuserServiceTest {
 
     @Test
     void get_given_not_found_security_user_then_throw_exception() {
-        var securityUser = new SecurityUser(
-                UUID.randomUUID(),
-                "username",
-                "password",
-                SecurityScope.APPLICATION
-        );
+        var securityUser = new SecurityUser(UUID.randomUUID(), "username", "password", Set.of());
 
         when(securityService.loadUserFromSecurityContext()).thenReturn(securityUser);
-        when(appuserRepository.findById(new AppuserId(securityUser.getId()))).thenReturn(Optional.empty());
+        when(appuserRepository.findById(new AppuserId(securityUser.id()))).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() ->
-                appuserService.get()
-        ).isInstanceOf(AppuserNotFoundException.class);
+        assertThatThrownBy(() -> appuserService.get()).isInstanceOf(AppuserNotFoundException.class);
     }
 
     @Test
@@ -104,25 +90,18 @@ class AppuserServiceTest {
         when(appuserRepository.existsByUsername(new Username(createAppuserDto.username()))).thenReturn(true);
         when(securityService.generateEncodedPassword(createAppuserDto.password())).thenReturn("encoded-password");
 
-        assertThatThrownBy(() ->
-                appuserService.create(createAppuserDto)
-        ).isInstanceOf(AppuserAlreadyExistsException.class);
+        assertThatThrownBy(() -> appuserService.create(createAppuserDto)).isInstanceOf(AppuserAlreadyExistsException.class);
     }
 
     @Test
     void update_given_dto_then_update_username_and_password() {
-        var securityUser = new SecurityUser(
-                UUID.randomUUID(),
-                "username",
-                "password",
-                SecurityScope.APPLICATION
-        );
+        var securityUser = new SecurityUser(UUID.randomUUID(), "username", "password", Set.of());
         var appuser = Appuser.from(
-                new AppuserId(securityUser.getId()),
-                new Username(securityUser.getUsername()),
-                new Password(securityUser.getPassword()),
-                new Scope(SecurityScope.APPLICATION)
+                new AppuserId(securityUser.id()),
+                new Username(securityUser.username()),
+                new Password(securityUser.password())
         );
+
         var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
 
         when(securityService.loadUserFromSecurityContext()).thenReturn(securityUser);
@@ -139,18 +118,13 @@ class AppuserServiceTest {
 
     @Test
     void update_given_dto_with_duplicate_username_then_throw_exception() {
-        var securityUser = new SecurityUser(
-                UUID.randomUUID(),
-                "username",
-                "password",
-                SecurityScope.APPLICATION
-        );
+        var securityUser = new SecurityUser(UUID.randomUUID(), "username", "password", Set.of());
         var appuser = Appuser.from(
-                new AppuserId(securityUser.getId()),
-                new Username(securityUser.getUsername()),
-                new Password(securityUser.getPassword()),
-                new Scope(SecurityScope.APPLICATION)
+                new AppuserId(securityUser.id()),
+                new Username(securityUser.username()),
+                new Password(securityUser.password())
         );
+
         var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
 
         when(securityService.loadUserFromSecurityContext()).thenReturn(securityUser);
@@ -165,17 +139,11 @@ class AppuserServiceTest {
 
     @Test
     void delete_then_delete_appuser() {
-        var securityUser = new SecurityUser(
-                UUID.randomUUID(),
-                "username",
-                "password",
-                SecurityScope.APPLICATION
-        );
+        var securityUser = new SecurityUser(UUID.randomUUID(), "username", "password", Set.of());
         var appuser = Appuser.from(
-                new AppuserId(securityUser.getId()),
-                new Username(securityUser.getUsername()),
-                new Password(securityUser.getPassword()),
-                new Scope(SecurityScope.APPLICATION)
+                new AppuserId(securityUser.id()),
+                new Username(securityUser.username()),
+                new Password(securityUser.password())
         );
 
         when(securityService.loadUserFromSecurityContext()).thenReturn(securityUser);
@@ -188,18 +156,11 @@ class AppuserServiceTest {
 
     @Test
     void delete_given_not_found_security_user_then_throw_exception() {
-        var securityUser = new SecurityUser(
-                UUID.randomUUID(),
-                "username",
-                "password",
-                SecurityScope.APPLICATION
-        );
+        var securityUser = new SecurityUser(UUID.randomUUID(), "username", "password", Set.of());
 
         when(securityService.loadUserFromSecurityContext()).thenReturn(securityUser);
-        when(appuserRepository.findById(new AppuserId(securityUser.getId()))).thenReturn(Optional.empty());
+        when(appuserRepository.findById(new AppuserId(securityUser.id()))).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() ->
-                appuserService.delete()
-        ).isInstanceOf(AppuserNotFoundException.class);
+        assertThatThrownBy(() -> appuserService.delete()).isInstanceOf(AppuserNotFoundException.class);
     }
 }

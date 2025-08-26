@@ -21,19 +21,15 @@ import java.util.List;
 public class Appuser implements AggregateRoot<Appuser, AppuserId> {
 
     @EmbeddedId
-    @AttributeOverride(name = "value", column = @Column(name = "id"))
     private AppuserId id;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "username"))
     private Username username;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "password"))
     private Password password;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @AttributeOverride(name = "value", column = @Column(name = "scope"))
     private List<Scope> scopes;
 
     @Transient
@@ -49,13 +45,12 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
         this.scopes = scopes;
     }
 
-    public static Appuser from(AppuserId id, Username username, Password password, Scope initialScope) {
+    public static Appuser from(AppuserId id, Username username, Password password) {
         Assert.notNull(id, "id must not be null");
         Assert.notNull(username, "username must not be null");
         Assert.notNull(password, "password must not be null");
-        Assert.notNull(initialScope, "initialScope must not be null");
 
-        return new Appuser(id, username, password, List.of(initialScope));
+        return new Appuser(id, username, password, new ArrayList<>());
     }
 
     @Override
@@ -81,6 +76,11 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
 
     public List<Scope> getScopes() {
         return scopes;
+    }
+
+    public void addApplicationScope() {
+        var applicationScope = new Scope("APPLICATION");
+        scopes.add(applicationScope);
     }
 
     public void delete() {

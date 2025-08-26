@@ -65,10 +65,7 @@ public class SecurityService {
             var id = UUID.fromString(idClaim);
 
             var scopeClaims = jwt.getClaimAsString(SCOPE_CLAIM_NAME).split(" ");
-            var scopes = Arrays
-                    .stream(scopeClaims)
-                    .map(SecurityScope::valueOf)
-                    .collect(Collectors.toSet());
+            var scopes = Arrays.stream(scopeClaims).map(SecurityScope::valueOf).collect(Collectors.toSet());
 
             return new SecurityUser(id, jwt.getSubject(), "not available", scopes);
         }
