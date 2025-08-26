@@ -24,6 +24,11 @@ class DefaultNoteRepository implements NoteRepository {
     }
 
     @Override
+    public long countByIdAppuserIdValue(UUID appuserIdValue) {
+        return noteJpaRepository.countByAppuserId(appuserIdValue);
+    }
+
+    @Override
     public Optional<Note> findById(NoteId id) {
         return noteJpaRepository.findByIdAndAppuserId(id.noteIdValue(), id.appuserIdValue());
     }
@@ -47,4 +52,5 @@ class DefaultNoteRepository implements NoteRepository {
     public void save(Note note) {
         noteJpaRepository.save(note);
     }
+
 }

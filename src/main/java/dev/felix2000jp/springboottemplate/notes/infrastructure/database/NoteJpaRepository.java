@@ -14,6 +14,8 @@ interface NoteJpaRepository extends JpaRepository<Note, NoteId> {
 
     List<Note> findAllByAppuserId(UUID appuserId);
 
+    long countByAppuserId(UUID appuserId);
+
     Optional<Note> findByIdAndAppuserId(UUID id, UUID appuserId);
 
     void deleteAllByAppuserId(UUID appuserId);
