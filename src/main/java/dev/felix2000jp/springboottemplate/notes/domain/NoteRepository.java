@@ -10,6 +10,8 @@ public interface NoteRepository {
 
     List<Note> findAllByIdAppuserIdValue(UUID appuserIdValue);
 
+    long countByIdAppuserIdValue(UUID appuserIdValue);
+
     Optional<Note> findById(NoteId id);
 
     void delete(Note note);

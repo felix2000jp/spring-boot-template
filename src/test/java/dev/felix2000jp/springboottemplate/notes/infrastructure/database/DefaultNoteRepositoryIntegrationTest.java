@@ -51,6 +51,28 @@ class DefaultNoteRepositoryIntegrationTest {
     }
 
     @Test
+    void countByIdAppuserIdValue_given_appuser_id_then_return_count() {
+        var appuserId = note.getId().appuserIdValue();
+        var anotherNote = Note.from(
+                new NoteId(appuserId, UUID.randomUUID()),
+                new Title("another title"),
+                new Content("another content")
+        );
+        noteRepository.save(anotherNote);
+
+        var actual = noteRepository.countByIdAppuserIdValue(appuserId);
+
+        assertThat(actual).isEqualTo(2L);
+    }
+
+    @Test
+    void countByIdAppuserIdValue_given_appuser_id_without_notes_then_return_zero() {
+        var actual = noteRepository.countByIdAppuserIdValue(UUID.randomUUID());
+
+        assertThat(actual).isZero();
+    }
+
+    @Test
     void findById_given_id_then_return_note() {
         var actual = noteRepository.findById(note.getId());
 

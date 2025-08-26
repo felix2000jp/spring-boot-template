@@ -53,8 +53,9 @@ class AppuserDeletedEventHandlerIntegrationTest {
 
         scenario
                 .publish(appuserDeletedEvent)
-                .andWaitForStateChange(() -> eventHandler)
-                .andVerify(unusedEventHandler -> {
+                .andWaitForStateChange(() -> noteRepository.countByIdAppuserIdValue(appuserId))
+                .andVerify(count -> {
+                    assertThat(count).isZero();
                     assertThat(noteRepository.findById(note1.getId())).isNotPresent();
                     assertThat(noteRepository.findById(note2.getId())).isNotPresent();
                     assertThat(noteRepository.findById(note3.getId())).isPresent();
