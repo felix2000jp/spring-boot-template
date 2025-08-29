@@ -15,17 +15,17 @@ import java.util.stream.Collectors;
 @Service
 class AppuserUserDetailsService implements UserDetailsService {
 
-    private final AppuserRepository appuserService;
+    private final AppuserRepository appuserRepository;
 
-    AppuserUserDetailsService(AppuserRepository appuserService) {
-        this.appuserService = appuserService;
+    AppuserUserDetailsService(AppuserRepository appuserRepository) {
+        this.appuserRepository = appuserRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         var usernameValueObject = new Username(username);
 
-        var appuser = appuserService
+        var appuser = appuserRepository
                 .findByUsername(usernameValueObject)
                 .orElseThrow(AppuserNotFoundException::new);
 
