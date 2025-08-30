@@ -18,13 +18,13 @@ public class Note implements AggregateRoot<Note, NoteId> {
     @Column(name = "id")
     private UUID id;
 
-    @Column(name = "appuser_id")
+    @Column(name = "appuser_id", nullable = false)
     private UUID appuserId;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "content")
+    @Column(name = "content", nullable = false)
     private String content;
 
     protected Note() {

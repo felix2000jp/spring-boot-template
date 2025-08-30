@@ -21,15 +21,19 @@ import java.util.List;
 public class Appuser implements AggregateRoot<Appuser, AppuserId> {
 
     @EmbeddedId
+    @AttributeOverride(name = "value", column = @Column(name = "id"))
     private AppuserId id;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "username", nullable = false, unique = true))
     private Username username;
 
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "password", nullable = false))
     private Password password;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @AttributeOverride(name = "value", column = @Column(name = "scope", nullable = false))
     private List<Scope> scopes;
 
     @Transient
