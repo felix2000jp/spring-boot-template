@@ -163,4 +163,18 @@ class AppuserServiceTest {
 
         assertThatThrownBy(() -> appuserService.delete()).isInstanceOf(AppuserNotFoundException.class);
     }
+
+    @Test
+    void login_then_return_appuser_token_dto() {
+        var securityUser = new SecurityUser(UUID.randomUUID(), "username", "password", Set.of());
+        var expectedToken = "jwt.test.token";
+
+        when(securityService.loadUserFromSecurityContext()).thenReturn(securityUser);
+        when(securityService.generateToken(securityUser.id(), securityUser.username(), securityUser.scopes())).thenReturn(expectedToken);
+
+        var actual = appuserService.login();
+
+        assertThat(actual.token()).isEqualTo(expectedToken);
+    }
+
 }

@@ -1,6 +1,7 @@
 package dev.felix2000jp.springboottemplate.appusers.application;
 
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserDto;
+import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserTokenDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
@@ -102,9 +103,11 @@ public class AppuserService {
     }
 
     @Transactional(readOnly = true)
-    public String login() {
+    public AppuserTokenDto login() {
         var user = securityService.loadUserFromSecurityContext();
-        return securityService.generateToken(user.id(), user.username(), user.scopes());
+        var token = securityService.generateToken(user.id(), user.username(), user.scopes());
+
+        return appuserMapper.toDto(token);
     }
 
 }
