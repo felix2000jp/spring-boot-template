@@ -2,6 +2,7 @@ package dev.felix2000jp.springboottemplate.appusers.infrastructure.api;
 
 import dev.felix2000jp.springboottemplate.appusers.application.AppuserService;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserDto;
+import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserTokenDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
 import jakarta.validation.Valid;
@@ -48,7 +49,7 @@ class AppuserController {
     }
 
     @PostMapping("/login")
-    ResponseEntity<String> login() {
+    ResponseEntity<AppuserTokenDto> login() {
         var body = appuserService.login();
         return ResponseEntity.ok(body);
     }

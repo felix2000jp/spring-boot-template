@@ -2,6 +2,7 @@ package dev.felix2000jp.springboottemplate.appusers.infrastructure.api;
 
 import dev.felix2000jp.springboottemplate.TestcontainersConfiguration;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserDto;
+import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserTokenDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
@@ -128,10 +129,11 @@ class AppuserControllerIntegrationTest {
                 "/api/appusers/login",
                 HttpMethod.POST,
                 new HttpEntity<>(null),
-                String.class
+                AppuserTokenDto.class
         );
 
         assertThat(loginTokenEntity.getStatusCode().value()).isEqualTo(200);
-        assertThat(loginTokenEntity.getBody()).isNotBlank();
+        assertThat(loginTokenEntity.getBody()).isNotNull();
+        assertThat(loginTokenEntity.getBody().token()).isNotBlank();
     }
 }

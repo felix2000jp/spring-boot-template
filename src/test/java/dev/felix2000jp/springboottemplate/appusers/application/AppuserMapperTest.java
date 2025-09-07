@@ -30,4 +30,13 @@ class AppuserMapperTest {
         assertThat(actual.scopes()).contains("APPLICATION");
     }
 
+    @Test
+    void toDto_given_token_then_map_to_dto() {
+        var token = "some-access-token";
+
+        var actual = appuserMapper.toDto(token);
+
+        assertThat(actual.token()).isEqualTo("some-access-token");
+    }
+
 }
