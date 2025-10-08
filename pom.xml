@@ -30,7 +30,7 @@
     <properties>
         <java.version>25</java.version>
         <spring-modulith.version>1.4.3</spring-modulith.version>
-        <jmolecules.version>2023.3.2</jmolecules.version>
+        <jmolecules.version>2023.3.4</jmolecules.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
     </properties>
 
