@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.modulith.Modulith;
 
 @Modulith(systemName = "Spring Boot Template", sharedModules = "system")
-class Application {
+public class Application {
 
-    static void main(String[] args) {
+    public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
