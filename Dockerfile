@@ -1,12 +1,10 @@
 FROM eclipse-temurin:25
 RUN groupadd spring && useradd -m -g spring spring
 
-ENV CERTS=/certs
-ARG OTEL_JAR=otel/*.jar
 ARG TARGET_JAR=target/*.jar
 
-COPY ${CERTS} /certs
-COPY ${OTEL_JAR} /otel.jar
+COPY certs /certs
+COPY otel/*.jar /otel.jar
 COPY ${TARGET_JAR} /target.jar
 
 USER spring:spring
