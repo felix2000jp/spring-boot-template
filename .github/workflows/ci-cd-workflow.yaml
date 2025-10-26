@@ -9,7 +9,7 @@ on:
 env:
   REGISTRY_NAME: ghcr.io
   APPLICATION_NAME: ${{ github.repository }}
-  TARGET_JAR: target-jar
+  TARGET_JAR_ARTIFACT: target-jar
 
 jobs:
   build-and-test-code:
@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: 'target/*.jar'
-          name: ${{ env.TARGET_JAR }}
+          name: ${{ env.TARGET_JAR_ARTIFACT }}
           if-no-files-found: error
   build-and-push-image:
     name: Build and push the image
@@ -55,7 +55,7 @@ jobs:
       - name: Download JAR file artifact
         uses: actions/download-artifact@v5
         with:
-          name: ${{ env.TARGET_JAR }}
+          name: ${{ env.TARGET_JAR_ARTIFACT }}
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to the registry
