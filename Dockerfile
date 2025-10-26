@@ -1,11 +1,13 @@
 FROM eclipse-temurin:25
 RUN groupadd spring && useradd -m -g spring spring
 
-ARG TARGET_JAR=target/*.jar
+# Uncomment for ready to use builds
+# COPY certs /certs
+# COPY otel/*.jar /otel.jar
 
-COPY certs /certs
-COPY otel/*.jar /otel.jar
+ARG TARGET_JAR=target/*.jar
 COPY ${TARGET_JAR} /target.jar
 
+# To use in prod run: docker run -v /path-to-certs:/certs:ro -v /path-to-otel.jar:/otel.jar:ro spring-app:latest
 USER spring:spring
 ENTRYPOINT ["java", "-javaagent:/otel.jar", "-jar", "/target.jar"]
