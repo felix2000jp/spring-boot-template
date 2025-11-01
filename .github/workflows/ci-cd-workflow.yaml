@@ -51,11 +51,13 @@ jobs:
           echo running ls -R
           ls -R
           cd ..
-          echo running ls -R
-          ls -R
+          echo ""
+          echo running ls
+          ls
           cd spring-boot-template
-          echo running ls -R
-          ls -R
+          echo ""
+          echo running ls
+          ls
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to the registry
