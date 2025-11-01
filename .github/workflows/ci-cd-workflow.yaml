@@ -63,15 +63,11 @@ jobs:
             type=raw,value=latest
       - name: Debug
         run: |
-          ls
-          cd ..
-          ls
+          ls -a
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          build-args: |
-            OTEL_JAR=artifacts/otel/*.jar
-            TARGET_JAR=artifacts/target/*.jar
+          build-args: TARGET_JAR=target/*.jar
