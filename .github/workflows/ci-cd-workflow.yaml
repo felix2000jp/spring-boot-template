@@ -54,7 +54,7 @@ jobs:
           echo ""
           echo running ls
           ls
-          cd spring-boot-template
+          cd ..
           echo ""
           echo running ls
           ls
