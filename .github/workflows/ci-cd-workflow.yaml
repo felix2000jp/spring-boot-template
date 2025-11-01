@@ -61,6 +61,11 @@ jobs:
           tags: |
             type=sha
             type=raw,value=latest
+      - name: Debug
+        run: |
+          ls
+          cd ..
+          ls
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
