@@ -7,8 +7,11 @@ RUN groupadd spring && useradd -m -g spring spring
 # Uncomment for ready to use development builds
 # COPY certs /certs
 
-COPY otel/*.jar otel.jar
-COPY target/*.jar target.jar
+ARG OTEL_JAR=otel/*.jar
+COPY ${OTEL_JAR} otel.jar
+
+ARG TARGET_JAR=target/*.jar
+COPY ${TARGET_JAR} target.jar
 
 USER spring:spring
 ENTRYPOINT ["java", "-javaagent:otel.jar", "-jar", "target.jar"]
