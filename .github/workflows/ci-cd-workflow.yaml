@@ -28,8 +28,8 @@ jobs:
       - name: Build and test code
         run: |
           mvn -B clean verify
-          mkdir -p artifacts/otel artifacts/target
-          cp otel/*.jar artifacts/otel && cp target/*.jar artifacts/target
+          mkdir -p artifacts/otel artifacts/application
+          cp otel/*.jar artifacts/otel && cp target/*.jar artifacts/application
       - name: Upload target JAR file artifact
         uses: actions/upload-artifact@v5
         with:
@@ -72,4 +72,4 @@ jobs:
           labels: ${{ steps.docker_meta.outputs.labels }}
           build-args: |
             OTEL_JAR=otel/*.jar
-            TARGET_JAR=target/*.jar
+            TARGET_JAR=application/*.jar
