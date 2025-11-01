@@ -30,12 +30,7 @@ jobs:
           mvn -B clean verify
           mkdir -p artifacts
           cp otel/*.jar artifacts/otel.jar && cp target/*.jar artifacts/target.jar
-      - name: Upload target JAR file artifact
-        uses: actions/upload-artifact@v5
-        with:
-          path: artifacts/otel.jar
-          name: artifacts-otel
-          if-no-files-found: error
+
       - name: Upload target JAR file artifact
         uses: actions/upload-artifact@v5
         with:
@@ -47,10 +42,7 @@ jobs:
     needs: [ build-and-test-code ]
     runs-on: ubuntu-latest
     steps:
-      - name: Download JAR file artifact
-        uses: actions/download-artifact@v6
-        with:
-          name: artifacts-otel
+
       - name: Download JAR file artifact
         uses: actions/download-artifact@v6
         with:
@@ -80,5 +72,5 @@ jobs:
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           build-args: |
-            OTEL_JAR=otel.jar
+            OTEL_JAR=target.jar
             TARGET_JAR=target.jar
