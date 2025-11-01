@@ -48,16 +48,8 @@ jobs:
           path: .
       - name: Debug
         run: |
-          echo running ls -R
-          ls -R
-          cd ..
-          echo ""
-          echo running ls
-          ls
-          cd ..
-          echo ""
-          echo running ls
-          ls
+          pwd
+          ls -R | head -n 50
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to the registry
