@@ -55,6 +55,8 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: artifacts-target
+      - name: Debug Step
+        run: ls
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to the registry
