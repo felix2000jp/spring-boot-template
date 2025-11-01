@@ -33,7 +33,7 @@ jobs:
       - name: Upload target JAR file artifact
         uses: actions/upload-artifact@v5
         with:
-          path: artifacts
+          path: target/*.jar
           name: artifacts
           if-no-files-found: error
   build-and-push-image:
@@ -70,5 +70,5 @@ jobs:
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           build-args: |
-            OTEL_JAR=otel.jar
-            TARGET_JAR=target.jar
+            OTEL_JAR=*.jar
+            TARGET_JAR=*.jar
