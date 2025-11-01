@@ -71,3 +71,6 @@ jobs:
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
+          build-args: |
+            OTEL_JAR=otel/opentelemetry-javaagent.jar
+            TARGET_JAR=target/spring-boot-template-0.0.1-SNAPSHOT.jar
