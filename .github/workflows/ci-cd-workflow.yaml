@@ -28,12 +28,12 @@ jobs:
       - name: Build and test code
         run: |
           mvn -B clean verify
-          mkdir -p artifacts/otel artifacts/target
-          cp otel/*.jar artifacts/otel && cp target/*.jar artifacts/target
+          mkdir -p artifact/otel artifact/target
+          cp otel/*.jar artifact/otel && cp target/*.jar artifact/target
       - name: Upload target JAR file artifact
         uses: actions/upload-artifact@v5
         with:
-          path: artifacts
+          path: artifact
           if-no-files-found: error
   build-and-push-image:
     name: Build and push the image
@@ -42,6 +42,8 @@ jobs:
     steps:
       - name: Download JAR file artifact
         uses: actions/download-artifact@v6
+      - name: Debug
+        run: ls -R
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to the registry
