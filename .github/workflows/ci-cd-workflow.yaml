@@ -29,7 +29,7 @@ jobs:
         run: |
           mvn -B clean verify
           mkdir -p artifacts/otel artifacts/target 
-          cp otel/*.jar artifact/otel && cp target/*.jar artifact/target
+          cp otel/*.jar artifacts/otel && cp target/*.jar artifacts/target
       - name: Upload target JAR file artifact
         uses: actions/upload-artifact@v5
         with:
