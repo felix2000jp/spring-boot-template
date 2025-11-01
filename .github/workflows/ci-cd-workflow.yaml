@@ -61,15 +61,9 @@ jobs:
           tags: |
             type=sha
             type=raw,value=latest
-      - name: Debug
-        run: |
-          ls
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          build-args: |
-            OTEL_JAR=otel/*.jar
-            TARGET_JAR=target/*.jar
