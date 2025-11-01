@@ -45,13 +45,6 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: application-artifacts
-      - name: Debug
-        run: |
-          ls otel
-          ls target
-          ls artifact
-          ls artifact/otel
-          ls artifact/target
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to the registry
@@ -74,6 +67,3 @@ jobs:
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          build-args: |
-            OTEL_JAR=artifact/otel/*.jar
-            TARGET_JAR=artifact/target/*.jar
