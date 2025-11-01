@@ -28,27 +28,20 @@ jobs:
       - name: Build and test code
         run: |
           mvn -B clean verify
-          mkdir -p artifacts
-          cp otel/*.jar artifacts/otel.jar && cp target/*.jar artifacts/target.jar
-
+          mkdir -p artifacts/otel artifacts/target
+          cp otel/*.jar artifacts/otel && cp target/*.jar artifacts/target
       - name: Upload target JAR file artifact
         uses: actions/upload-artifact@v5
         with:
-          path: artifacts/target.jar
-          name: artifacts-target
+          path: artifacts
           if-no-files-found: error
   build-and-push-image:
     name: Build and push the image
     needs: [ build-and-test-code ]
     runs-on: ubuntu-latest
     steps:
-
       - name: Download JAR file artifact
         uses: actions/download-artifact@v6
-        with:
-          name: artifacts-target
-      - name: Debug Step
-        run: ls
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to the registry
@@ -71,6 +64,3 @@ jobs:
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          build-args: |
-            OTEL_JAR=target.jar
-            TARGET_JAR=target.jar
