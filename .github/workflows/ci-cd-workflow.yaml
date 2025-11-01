@@ -64,7 +64,6 @@ jobs:
       - name: Debug
         run: |
           ls
-          ls target/
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:

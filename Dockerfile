@@ -7,8 +7,8 @@ RUN groupadd spring && useradd -m -g spring spring
 # Uncomment for ready to use development builds
 # COPY certs /certs
 
-ARG OTEL_JAR=otel/*.jar
-COPY ${OTEL_JAR} /otel.jar
+# ARG OTEL_JAR=otel/*.jar
+# COPY ${OTEL_JAR} /otel.jar
 
 ARG TARGET_JAR=target/*.jar
 COPY ${TARGET_JAR} /target.jar
