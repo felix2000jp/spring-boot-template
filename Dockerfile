@@ -8,10 +8,10 @@ RUN groupadd spring && useradd -m -g spring spring
 # COPY certs /certs
 
 ARG OTEL_JAR=otel/*.jar
-COPY ${OTEL_JAR} /otel.jar
+COPY ${OTEL_JAR} otel.jar
 
 ARG TARGET_JAR=target/*.jar
-COPY ${TARGET_JAR} /target.jar
+COPY ${TARGET_JAR} target.jar
 
 USER spring:spring
-ENTRYPOINT ["java", "-javaagent:/otel.jar", "-jar", "/target.jar"]
+ENTRYPOINT ["java", "-javaagent:otel.jar", "-jar", "target.jar"]
