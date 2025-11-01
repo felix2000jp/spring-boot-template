@@ -68,5 +68,5 @@ jobs:
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           build-args: |
-            OTEL_JAR=artifact/otel/*.jar
-            TARGET_JAR=artifact/target/*.jar
+            OTEL_JAR=/otel/*.jar
+            TARGET_JAR=/target/*.jar
