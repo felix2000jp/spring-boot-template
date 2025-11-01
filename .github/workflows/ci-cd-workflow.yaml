@@ -33,13 +33,13 @@ jobs:
       - name: Upload target JAR file artifact
         uses: actions/upload-artifact@v5
         with:
-          path: artifacts/otel
+          path: artifacts/otel.jar
           name: artifacts-otel
           if-no-files-found: error
       - name: Upload target JAR file artifact
         uses: actions/upload-artifact@v5
         with:
-          path: artifacts/target
+          path: artifacts/target.jar
           name: artifacts-target
           if-no-files-found: error
   build-and-push-image:
