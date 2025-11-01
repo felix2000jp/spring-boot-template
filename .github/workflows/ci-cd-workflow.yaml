@@ -47,7 +47,6 @@ jobs:
           name: application-artifacts
       - name: Debug
         run: |
-          ls otel
           ls target
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v3
