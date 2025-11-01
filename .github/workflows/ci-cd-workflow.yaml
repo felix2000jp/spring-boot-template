@@ -9,7 +9,6 @@ on:
 env:
   REGISTRY_NAME: ghcr.io
   APPLICATION_NAME: ${{ github.repository }}
-  TARGET_JAR_ARTIFACT: target-jar
 
 jobs:
   build-and-test-code:
@@ -27,35 +26,25 @@ jobs:
           java-version: 25
           cache: maven
       - name: Build and test code
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: >
+        run: |
           mvn -B clean verify
-          -Pcoverage org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-          -Dsonar.host.url=https://sonarcloud.io
-          -Dsonar.projectKey=felix2000jp_spring-boot-template
-          -Dsonar.organization=felix2000jp
-          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-      - name: Upload JAR file artifact
+          mkdir -p artifact/otel artifact/target 
+          cp otel/*.jar artifact/otel && cp target/*.jar artifact/target
+      - name: Upload target JAR file artifact
         uses: actions/upload-artifact@v5
         with:
-          path: 'target/*.jar'
-          name: ${{ env.TARGET_JAR_ARTIFACT }}
+          path: artifact
+          name: application-artifacts
           if-no-files-found: error
   build-and-push-image:
     name: Build and push the image
     needs: [ build-and-test-code ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
       - name: Download JAR file artifact
         uses: actions/download-artifact@v6
         with:
-          name: ${{ env.TARGET_JAR_ARTIFACT }}
+          name: application-artifacts
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to the registry
@@ -78,12 +67,6 @@ jobs:
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          build-args: TARGET_JAR=*.jar
-  deploy-application:
-    if: ${{ github.ref == 'refs/heads/main' }}
-    name: Deploy the application
-    needs: [ build-and-push-image ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup deploy env
-        run: echo "Use this step to deploy your app if needed"
+          build-args: |
+            OTEL_JAR=artifact/otel/*.jar
+            TARGET_JAR=artifact/target/*.jar
