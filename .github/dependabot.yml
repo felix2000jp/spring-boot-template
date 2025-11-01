@@ -9,7 +9,7 @@ updates:
       include: scope
     groups:
       github-actions:
-        patterns: [ "*" ]
+        patterns: ["*"]
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
@@ -27,3 +27,6 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    groups:
+      maven:
+        patterns: ["*"]
