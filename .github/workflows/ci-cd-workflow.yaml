@@ -28,8 +28,8 @@ jobs:
       - name: Build and test code
         run: |
           mvn -B clean verify
-          mkdir -p artifacts/otel artifacts/target
-          cp otel/*.jar artifacts/otel && cp target/*.jar artifacts/target
+          mkdir -p artifacts
+          cp otel/*.jar artifacts/otel.jar && cp target/*.jar artifacts/target.jar
       - name: Upload target JAR file artifact
         uses: actions/upload-artifact@v5
         with:
@@ -41,15 +41,15 @@ jobs:
     needs: [ build-and-test-code ]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       - name: Download JAR file artifact
         uses: actions/download-artifact@v6
         with:
           name: artifacts
           path: .
-      - name: Debug
-        run: |
-          pwd
-          ls -R | head -n 50
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to the registry
@@ -69,8 +69,9 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ./docker/Dockerfile
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
+          build-args: |
+            OTEL_JAR=otel.jar
+            TARGET_JAR=target.jar
