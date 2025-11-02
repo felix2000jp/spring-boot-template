@@ -27,7 +27,8 @@ jobs:
         run: |
           mvn -B clean verify
           mkdir -p artifacts
-          cp otel/*.jar artifacts/otel.jar && cp target/*.jar artifacts/target.jar
+          cp otel/*.jar artifacts/otel.jar
+          cp target/*.jar artifacts/target.jar
       - name: Upload target JAR file artifact
         uses: actions/upload-artifact@v5
         with:
@@ -63,7 +64,9 @@ jobs:
             type=sha
             type=raw,value=latest
       - name: debug
-        run: ls
+        run: |
+          ls
+          ls -R artifacts
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
