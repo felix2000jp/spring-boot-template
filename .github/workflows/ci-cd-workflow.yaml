@@ -27,8 +27,7 @@ jobs:
         run: |
           mvn -B clean verify
           mkdir -p artifacts
-          cp otel/*.jar artifacts/otel.jar
-          cp target/*.jar artifacts/target.jar
+          cp Dockerfile artifacts && cp otel/*.jar artifacts/otel && cp target/*.jar artifacts/target
       - name: Upload target JAR file artifact
         uses: actions/upload-artifact@v5
         with:
@@ -40,8 +39,6 @@ jobs:
     needs: [ build-and-test-code ]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
       - name: Download JAR file artifact
         uses: actions/download-artifact@v6
         with:
@@ -74,6 +71,3 @@ jobs:
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          build-args: |
-            OTEL_JAR=artifacts/otel.jar
-            TARGET_JAR=artifacts/target.jar
