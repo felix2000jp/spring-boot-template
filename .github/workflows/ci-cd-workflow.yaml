@@ -17,8 +17,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
       - name: Setup temurin JDK
         uses: actions/setup-java@v5
         with:
@@ -43,13 +41,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
       - name: Download JAR file artifact
         uses: actions/download-artifact@v6
         with:
           name: artifacts
-          path: .
+          path: artifacts
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v3
       - name: Login to the registry
@@ -66,6 +62,8 @@ jobs:
           tags: |
             type=sha
             type=raw,value=latest
+      - name: debug
+        run: ls
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
@@ -73,5 +71,5 @@ jobs:
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           build-args: |
-            OTEL_JAR=otel.jar
-            TARGET_JAR=target.jar
+            OTEL_JAR=artifacts/otel.jar
+            TARGET_JAR=artifacts/target.jar
