@@ -12,7 +12,7 @@
     <artifactId>spring-boot-template</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>spring-boot-template</name>
-    <description>spring-boot-template</description>
+    <description>A ready to use spring boot template</description>
     <url/>
     <licenses>
         <license/>
@@ -29,9 +29,8 @@
 
     <properties>
         <java.version>25</java.version>
-        <spring-modulith.version>1.4.4</spring-modulith.version>
-        <jmolecules.version>2023.3.4</jmolecules.version>
-        <jacoco-maven-plugin.version>0.8.14</jacoco-maven-plugin.version>
+        <spring-modulith-bom.version>1.4.4</spring-modulith-bom.version>
+        <jmolecules-bom.version>2023.3.4</jmolecules-bom.version>
     </properties>
 
     <dependencies>
@@ -153,14 +152,14 @@
             <dependency>
                 <groupId>org.springframework.modulith</groupId>
                 <artifactId>spring-modulith-bom</artifactId>
-                <version>${spring-modulith.version}</version>
+                <version>${spring-modulith-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.jmolecules</groupId>
                 <artifactId>jmolecules-bom</artifactId>
-                <version>${jmolecules.version}</version>
+                <version>${jmolecules-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -187,38 +186,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>coverage</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>${jacoco-maven-plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>prepare-agent</id>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>report</id>
-                                <goals>
-                                    <goal>report</goal>
-                                </goals>
-                                <configuration>
-                                    <formats>
-                                        <format>XML</format>
-                                    </formats>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>

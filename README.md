@@ -72,23 +72,19 @@ weekly basis open PRs with version updates for both the maven and actions depend
 ### GitHub actions - CI/CD Workflow
 
 This workflow is made of 4 different jobs and its intent is to scan the code for vulnerabilities, build and test your
-changes and then to build a docker image with the resulting JAR file and push it to docker hub, finally it will deploy
-your image.
+changes and then to build a docker image with the resulting JAR file and push it to a registry.
 
 #### Build and test the code
 
-This is the **first** job in this workflow.
-
 It sets up temurin JDK and maven and then runs the command "mvn clean verify". This command will compile the code, test
-it, package it in a JAR file and run code analysis performed by sonar. It then uploads the resulting JAR file, so it can
-be used in other jobs.
+it, package it in a JAR file. It then uploads the resulting JAR file, so it can be used in other jobs.
 
 #### Build and push the image
 
 This job is dependent on [Build and test the code](#build-and-test-the-code).
 
 It downloads the JAR file artifact and build a docker image with it. After building the image it pushes it to the
-digital ocean registry. This step is configured to only run it is running on the main branch.
+registry. This step is configured to only run it is running on the main branch.
 
 #### Deploy the Application
 
@@ -113,14 +109,3 @@ the [angular commit message guidelines](https://github.com/angular/angular/blob/
 - ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
 - chore: Changes that don't modify the source code directly but are important for maintaining the project
 - revert: Revert existing code
-
-### GitHub applications - SonarCloud Code Analysis
-
-This application will look at your linting results from [Sonar Cloud](https://sonarcloud.io) and block any merge that
-introduces new issues, be
-it bugs, vulnerabilities, technical debt, decreased coverage or an increased code duplication.
-
-### GitHub Security - Trivy Scan Results
-
-GitHub code scanning results are configured to read form the trivy scan results. Merges are blocked if results are found
-with medium or higher severity as well as any errors or warnings.
