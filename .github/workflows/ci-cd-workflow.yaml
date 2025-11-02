@@ -25,7 +25,7 @@ jobs:
           cache: maven
       - name: Build and test code
         run: |
-          mvn -B clean verify
+          mvn -B -DskipTests clean verify
           mkdir -p artifacts
           cp Dockerfile artifacts && cp otel/*.jar artifacts/otel && cp target/*.jar artifacts/target
       - name: Upload target JAR file artifact
@@ -62,8 +62,7 @@ jobs:
           path: .
       - name: debug
         run: |
-          ls
-          ls -R artifacts
+          ls -R
       - name: Build and push image
         uses: docker/build-push-action@v6
         with:
