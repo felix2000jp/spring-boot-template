@@ -1,7 +1,6 @@
 package dev.felix2000jp.springboottemplate.appusers.application;
 
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserDto;
-import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserTokenDto;
 import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import org.springframework.stereotype.Component;
@@ -15,10 +14,6 @@ class AppuserMapper {
                 appuser.getUsername().value(),
                 appuser.getScopes().stream().map(Scope::value).toList()
         );
-    }
-
-    AppuserTokenDto toDto(String token) {
-        return new AppuserTokenDto(token);
     }
 
 }

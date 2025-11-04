@@ -174,7 +174,7 @@ class AppuserServiceTest {
 
         var actual = appuserService.login();
 
-        assertThat(actual.token()).isEqualTo(expectedToken);
+        assertThat(actual).isEqualTo(expectedToken);
     }
 
 }
