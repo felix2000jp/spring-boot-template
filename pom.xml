@@ -29,8 +29,8 @@
 
     <properties>
         <java.version>25</java.version>
-        <spring-modulith-bom.version>2.0.0</spring-modulith-bom.version>
-        <jmolecules-bom.version>2025.0.1</jmolecules-bom.version>
+        <spring-modulith.version>2.0.0</spring-modulith.version>
+        <jmolecules.version>2025.0.1</jmolecules.version>
     </properties>
 
     <dependencies>
@@ -152,14 +152,15 @@
             <dependency>
                 <groupId>org.springframework.modulith</groupId>
                 <artifactId>spring-modulith-bom</artifactId>
-                <version>${spring-modulith-bom.version}</version>
+                <version>${spring-modulith.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
             <dependency>
                 <groupId>org.jmolecules</groupId>
                 <artifactId>jmolecules-bom</artifactId>
-                <version>${jmolecules-bom.version}</version>
+                <version>${jmolecules.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -168,10 +169,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -183,6 +180,10 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
