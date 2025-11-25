@@ -14,13 +14,11 @@ import dev.felix2000jp.springboottemplate.system.security.SecurityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.modulith.test.ApplicationModuleTest;
+import org.springframework.test.web.servlet.client.RestTestClient;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,18 +26,19 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ApplicationModuleTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureRestTestClient
 @Import({TestcontainersConfiguration.class})
 class AppuserControllerIntegrationTest {
 
     @Autowired
-    private TestRestTemplate testRestTemplate;
+    private RestTestClient restTestClient;
     @Autowired
     private SecurityService securityService;
     @Autowired
     private AppuserRepository appuserRepository;
 
     private Appuser appuser;
-    private HttpHeaders headers;
+    private String token;
 
     @BeforeEach
     void setUp() {
@@ -54,38 +53,39 @@ class AppuserControllerIntegrationTest {
 
         appuserRepository.save(appuser);
 
-        var token = securityService.generateToken(
+        token = securityService.generateToken(
                 appuser.getId().value(),
                 appuser.getUsername().value(),
                 List.of(SecurityScope.APPLICATION)
         );
-        headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + token);
     }
 
     @Test
     void get_then_return_appuser() {
-        var getAppuserEntity = testRestTemplate.exchange(
-                "/api/appusers",
-                HttpMethod.GET,
-                new HttpEntity<>(headers),
-                AppuserDto.class
-        );
+        var getAppuserEntity = restTestClient
+                .get()
+                .uri("/api/appusers")
+                .headers(h -> h.setBearerAuth(token))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(AppuserDto.class)
+                .returnResult();
 
-        assertThat(getAppuserEntity.getStatusCode().value()).isEqualTo(200);
-        assertThat(getAppuserEntity.getBody()).isNotNull();
+        assertThat(getAppuserEntity.getResponseBody()).isNotNull();
     }
 
     @Test
     void create_then_create_appuser() {
-        var createAppuserEntity = testRestTemplate.exchange(
-                "/api/appusers",
-                HttpMethod.POST,
-                new HttpEntity<>(new CreateAppuserDto("new username", "password"), null),
-                Void.class
-        );
-
-        assertThat(createAppuserEntity.getStatusCode().value()).isEqualTo(201);
+        restTestClient
+                .post()
+                .uri("/api/appusers")
+                .headers(h -> h.setBearerAuth(token))
+                .body(new CreateAppuserDto("new username", "password"))
+                .exchange()
+                .expectStatus()
+                .isCreated()
+                .expectBody(Void.class);
 
         var createdAppuser = appuserRepository.findByUsername(new Username("new username"));
         assertThat(createdAppuser).isPresent();
@@ -93,14 +93,15 @@ class AppuserControllerIntegrationTest {
 
     @Test
     void update_then_update_appuser() {
-        var updatePasswordEntity = testRestTemplate.exchange(
-                "/api/appusers",
-                HttpMethod.PUT,
-                new HttpEntity<>(new UpdateAppuserDto("updated username", "updated password"), headers),
-                Void.class
-        );
-
-        assertThat(updatePasswordEntity.getStatusCode().value()).isEqualTo(204);
+        restTestClient
+                .put()
+                .uri("/api/appusers")
+                .headers(h -> h.setBearerAuth(token))
+                .body(new UpdateAppuserDto("updated username", "updated password"))
+                .exchange()
+                .expectStatus()
+                .isNoContent()
+                .expectBody(Void.class);
 
         var updatedAppuser = appuserRepository.findById(appuser.getId());
         assertThat(updatedAppuser).isPresent();
@@ -109,14 +110,14 @@ class AppuserControllerIntegrationTest {
 
     @Test
     void delete_then_delete_appuser() {
-        var deleteAppuserEntity = testRestTemplate.exchange(
-                "/api/appusers",
-                HttpMethod.DELETE,
-                new HttpEntity<>(headers),
-                Void.class
-        );
-
-        assertThat(deleteAppuserEntity.getStatusCode().value()).isEqualTo(204);
+        restTestClient
+                .delete()
+                .uri("/api/appusers")
+                .headers(h -> h.setBearerAuth(token))
+                .exchange()
+                .expectStatus()
+                .isNoContent()
+                .expectBody(Void.class);
 
         var deletedAppuser = appuserRepository.findById(appuser.getId());
         assertThat(deletedAppuser).isNotPresent();
@@ -124,15 +125,17 @@ class AppuserControllerIntegrationTest {
 
     @Test
     void login_given_credentials_then_return_token() {
-        var loginTokenEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
-                "/api/appusers/login",
-                HttpMethod.POST,
-                new HttpEntity<>(null),
-                String.class
-        );
+        var loginTokenEntity = restTestClient
+                .post()
+                .uri("/api/appusers/login")
+                .headers(h -> h.setBasicAuth("username", "password"))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(String.class)
+                .returnResult();
 
-        assertThat(loginTokenEntity.getStatusCode().value()).isEqualTo(200);
-        assertThat(loginTokenEntity.getBody()).isNotNull();
-        assertThat(loginTokenEntity.getBody()).isNotBlank();
+        assertThat(loginTokenEntity.getResponseBody()).isNotNull();
+        assertThat(loginTokenEntity.getResponseBody()).isNotBlank();
     }
 }
