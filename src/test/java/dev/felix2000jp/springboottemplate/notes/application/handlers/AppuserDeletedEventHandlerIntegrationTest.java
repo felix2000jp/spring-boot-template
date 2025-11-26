@@ -10,9 +10,11 @@ import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Title;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
+import org.springframework.modulith.events.core.EventPublicationRegistry;
 import org.springframework.modulith.test.ApplicationModuleTest;
 import org.springframework.modulith.test.Scenario;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +26,7 @@ class AppuserDeletedEventHandlerIntegrationTest {
     @Autowired
     private NoteRepository noteRepository;
     @Autowired
-    private AppuserDeletedEventHandler eventHandler;
+    private EventPublicationRegistry registry;
 
     @Test
     void on_given_event_then_delete_all_notes_with_appuser_id_value(Scenario scenario) {
@@ -53,9 +55,8 @@ class AppuserDeletedEventHandlerIntegrationTest {
 
         scenario
                 .publish(appuserDeletedEvent)
-                .andWaitForStateChange(() -> noteRepository.countByIdAppuserIdValue(appuserId))
-                .andVerify(count -> {
-                    assertThat(count).isZero();
+                .andWaitForStateChange(() -> registry.findIncompletePublications(), Collection::isEmpty)
+                .andVerify(_ -> {
                     assertThat(noteRepository.findById(note1.getId())).isNotPresent();
                     assertThat(noteRepository.findById(note2.getId())).isNotPresent();
                     assertThat(noteRepository.findById(note3.getId())).isPresent();
