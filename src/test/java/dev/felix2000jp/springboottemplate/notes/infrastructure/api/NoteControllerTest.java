@@ -105,7 +105,9 @@ class NoteControllerTest {
     @ParameterizedTest
     @MethodSource
     @WithMockUser
-    void create_given_invalid_body_then_return_404(String body) throws Exception {
+    void create_given_invalid_body_then_return_404(String title, String content) throws Exception {
+        var createNoteDto = new CreateNoteDto(title, content);
+        var body = jsonMapper.writeValueAsString(createNoteDto);
         var request = post("/api/notes").contentType(MediaType.APPLICATION_JSON).content(body);
         mockMvc
                 .perform(request.with(csrf()))
@@ -116,16 +118,12 @@ class NoteControllerTest {
 
     private static Stream<Arguments> create_given_invalid_body_then_return_404() {
         return Stream.of(
-                arguments(""),
-                arguments("{}"),
-                arguments("{ 'title': 'title' }"),
-                arguments("{ 'content': 'content' }"),
-                arguments("{ 'title': null, 'content': 'content' }"),
-                arguments("{ 'title': '', 'content': 'content' }"),
-                arguments("{ 'title': ' ', 'content': 'content' }"),
-                arguments("{ 'title': 'title', 'content': null }"),
-                arguments("{ 'title': 'title', 'content': '' }"),
-                arguments("{ 'title': 'title', 'content': ' ' }")
+                arguments(null, "content"),
+                arguments("", "content"),
+                arguments(" ", "content"),
+                arguments("title", null),
+                arguments("title", ""),
+                arguments("title", " ")
         );
     }
 
@@ -166,7 +164,9 @@ class NoteControllerTest {
     @ParameterizedTest
     @MethodSource
     @WithMockUser
-    void update_given_invalid_body_then_return_400(String body) throws Exception {
+    void update_given_invalid_body_then_return_400(String title, String content) throws Exception {
+        var updateNoteDto = new UpdateNoteDto(title, content);
+        var body = jsonMapper.writeValueAsString(updateNoteDto);
         var request = put("/api/notes/" + UUID.randomUUID()).contentType(MediaType.APPLICATION_JSON).content(body);
         mockMvc
                 .perform(request.with(csrf()))
@@ -177,16 +177,12 @@ class NoteControllerTest {
 
     private static Stream<Arguments> update_given_invalid_body_then_return_400() {
         return Stream.of(
-                arguments(""),
-                arguments("{}"),
-                arguments("{ 'title': 'title' }"),
-                arguments("{ 'content': 'content' }"),
-                arguments("{ 'title': null, 'content': 'content' }"),
-                arguments("{ 'title': '', 'content': 'content' }"),
-                arguments("{ 'title': ' ', 'content': 'content' }"),
-                arguments("{ 'title': 'title', 'content': null }"),
-                arguments("{ 'title': 'title', 'content': '' }"),
-                arguments("{ 'title': 'title', 'content': ' ' }")
+                arguments(null, "content"),
+                arguments("", "content"),
+                arguments(" ", "content"),
+                arguments("title", null),
+                arguments("title", ""),
+                arguments("title", " ")
         );
     }
 

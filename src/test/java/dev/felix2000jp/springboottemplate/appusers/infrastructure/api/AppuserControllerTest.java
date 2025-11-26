@@ -105,7 +105,9 @@ class AppuserControllerTest {
     @ParameterizedTest
     @MethodSource
     @WithMockUser
-    void create_given_invalid_body_then_return_400(String body) throws Exception {
+    void create_given_invalid_body_then_return_400(String username, String password) throws Exception {
+        var createAppuserDto = new CreateAppuserDto(username, password);
+        var body = jsonMapper.writeValueAsString(createAppuserDto);
         var request = post("/api/appusers").contentType(MediaType.APPLICATION_JSON).content(body);
         mockMvc
                 .perform(request.with(csrf()))
@@ -116,19 +118,16 @@ class AppuserControllerTest {
 
     private static Stream<Arguments> create_given_invalid_body_then_return_400() {
         return Stream.of(
-                arguments(""),
-                arguments("{ 'username': 'username' }"),
-                arguments("{ 'password': 'password' }"),
-                arguments("{ 'username': null, 'password': 'password' }"),
-                arguments("{ 'username': 'username', 'password': null }"),
-                arguments("{ 'username': '', 'password': 'password' }"),
-                arguments("{ 'username': 'username', 'password': '' }"),
-                arguments("{ 'username': ' ', 'password': 'password' }"),
-                arguments("{ 'username': 'username', 'password': ' ' }"),
-                arguments("{ 'username': 'lol', 'password': 'password' }"),
-                arguments("{ 'username': 'username', 'password': 'lol' }"),
-                arguments("{ 'username': '" + "a".repeat(256) + "', 'password': 'password' }"),
-                arguments("{ 'username': 'username', 'password': '" + "a".repeat(256) + "' }")
+                arguments(null, "password"),
+                arguments("", "password"),
+                arguments(" ", "password"),
+                arguments("a", "password"),
+                arguments("a".repeat(256), "password"),
+                arguments("username", null),
+                arguments("username", ""),
+                arguments("username", " "),
+                arguments("username", "a"),
+                arguments("username", "a".repeat(256))
         );
     }
 
@@ -167,7 +166,9 @@ class AppuserControllerTest {
     @ParameterizedTest
     @MethodSource
     @WithMockUser
-    void update_given_invalid_body_then_return_400(String body) throws Exception {
+    void update_given_invalid_body_then_return_400(String username, String password) throws Exception {
+        var updateAppuserDto = new UpdateAppuserDto(username, password);
+        var body = jsonMapper.writeValueAsString(updateAppuserDto);
         var request = put("/api/appusers").contentType(MediaType.APPLICATION_JSON).content(body);
         mockMvc
                 .perform(request.with(csrf()))
@@ -178,19 +179,16 @@ class AppuserControllerTest {
 
     private static Stream<Arguments> update_given_invalid_body_then_return_400() {
         return Stream.of(
-                arguments(""),
-                arguments("{ 'username': 'username' }"),
-                arguments("{ 'password': 'password' }"),
-                arguments("{ 'username': null, 'password': 'password' }"),
-                arguments("{ 'username': 'username', 'password': null }"),
-                arguments("{ 'username': '', 'password': 'password' }"),
-                arguments("{ 'username': 'username', 'password': '' }"),
-                arguments("{ 'username': ' ', 'password': 'password' }"),
-                arguments("{ 'username': 'username', 'password': ' ' }"),
-                arguments("{ 'username': 'lol', 'password': 'password' }"),
-                arguments("{ 'username': 'username', 'password': 'lol' }"),
-                arguments("{ 'username': '" + "a".repeat(256) + "', 'password': 'password' }"),
-                arguments("{ 'username': 'username', 'password': '" + "a".repeat(256) + "' }")
+                arguments(null, "password"),
+                arguments("", "password"),
+                arguments(" ", "password"),
+                arguments("a", "password"),
+                arguments("a".repeat(256), "password"),
+                arguments("username", null),
+                arguments("username", ""),
+                arguments("username", " "),
+                arguments("username", "a"),
+                arguments("username", "a".repeat(256))
         );
     }
 
