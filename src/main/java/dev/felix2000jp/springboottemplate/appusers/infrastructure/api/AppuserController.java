@@ -5,6 +5,7 @@ import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
 import jakarta.validation.Valid;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,7 +48,7 @@ class AppuserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/login")
+    @PostMapping(value = "/login", produces = MediaType.TEXT_PLAIN_VALUE)
     ResponseEntity<String> login() {
         var body = appuserService.login();
         return ResponseEntity.ok(body);
