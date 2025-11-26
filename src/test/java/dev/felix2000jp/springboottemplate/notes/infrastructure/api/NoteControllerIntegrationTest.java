@@ -15,13 +15,11 @@ import dev.felix2000jp.springboottemplate.system.security.SecurityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.resttestclient.autoconfigure.AutoConfigureRestTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.modulith.test.ApplicationModuleTest;
+import org.springframework.test.web.servlet.client.RestTestClient;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,18 +27,19 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ApplicationModuleTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureRestTestClient
 @Import({TestcontainersConfiguration.class})
 class NoteControllerIntegrationTest {
 
     @Autowired
-    private TestRestTemplate testRestTemplate;
+    private RestTestClient restTestClient;
     @Autowired
     private SecurityService securityService;
     @Autowired
     private NoteRepository noteRepository;
 
     private Note note;
-    private HttpHeaders headers;
+    private String token;
 
     @BeforeEach
     void setUp() {
@@ -53,56 +52,57 @@ class NoteControllerIntegrationTest {
         );
         noteRepository.save(note);
 
-        var token = securityService.generateToken(
+        token = securityService.generateToken(
                 note.getId().appuserIdValue(),
                 "username",
                 List.of(SecurityScope.APPLICATION)
         );
-
-        headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + token);
     }
 
     @Test
     void get_return_notes() {
-        var findNoteBydIdEntity = testRestTemplate.exchange(
-                "/api/notes",
-                HttpMethod.GET,
-                new HttpEntity<>(headers),
-                NoteListDto.class
-        );
+        var findNoteBydIdEntity = restTestClient
+                .get()
+                .uri("/api/notes")
+                .headers(h -> h.setBearerAuth(token))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(NoteListDto.class)
+                .returnResult();
 
-        assertThat(findNoteBydIdEntity.getStatusCode().value()).isEqualTo(200);
-        assertThat(findNoteBydIdEntity.getBody()).isNotNull();
-        assertThat(findNoteBydIdEntity.getBody().notes()).hasSize(1);
+        assertThat(findNoteBydIdEntity.getResponseBody()).isNotNull();
+        assertThat(findNoteBydIdEntity.getResponseBody().notes()).hasSize(1);
     }
 
     @Test
     void getByNoteIdValue_then_return_note() {
-        var findNoteBydIdEntity = testRestTemplate.exchange(
-                "/api/notes/{id}",
-                HttpMethod.GET,
-                new HttpEntity<>(headers),
-                NoteDto.class,
-                note.getId().noteIdValue()
-        );
+        var findNoteBydIdEntity = restTestClient
+                .get()
+                .uri("/api/notes/" + note.getId().noteIdValue())
+                .headers(h -> h.setBearerAuth(token))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(NoteDto.class)
+                .returnResult();
 
-        assertThat(findNoteBydIdEntity.getStatusCode().value()).isEqualTo(200);
-        assertThat(findNoteBydIdEntity.getBody()).isNotNull();
-        assertThat(findNoteBydIdEntity.getBody().title()).isEqualTo(note.getTitle().value());
-        assertThat(findNoteBydIdEntity.getBody().content()).isEqualTo(note.getContent().value());
+        assertThat(findNoteBydIdEntity.getResponseBody()).isNotNull();
+        assertThat(findNoteBydIdEntity.getResponseBody().title()).isEqualTo(note.getTitle().value());
+        assertThat(findNoteBydIdEntity.getResponseBody().content()).isEqualTo(note.getContent().value());
     }
 
     @Test
     void create_then_create_note() {
-        var createNoteEntity = testRestTemplate.exchange(
-                "/api/notes",
-                HttpMethod.POST,
-                new HttpEntity<>(new CreateNoteDto("title", "content"), headers),
-                Void.class
-        );
-
-        assertThat(createNoteEntity.getStatusCode().value()).isEqualTo(201);
+        restTestClient
+                .post()
+                .uri("/api/notes")
+                .headers(h -> h.setBearerAuth(token))
+                .body(new CreateNoteDto("title", "content"))
+                .exchange()
+                .expectStatus()
+                .isCreated()
+                .expectBody(Void.class);
 
         var userNotes = noteRepository.findAllByIdAppuserIdValue(note.getId().appuserIdValue());
         assertThat(userNotes).hasSize(2);
@@ -110,15 +110,15 @@ class NoteControllerIntegrationTest {
 
     @Test
     void update_then_update_note() {
-        var updateNoteEntity = testRestTemplate.exchange(
-                "/api/notes/{id}",
-                HttpMethod.PUT,
-                new HttpEntity<>(new UpdateNoteDto("new title", "new content"), headers),
-                Void.class,
-                note.getId().noteIdValue()
-        );
-
-        assertThat(updateNoteEntity.getStatusCode().value()).isEqualTo(204);
+        restTestClient
+                .put()
+                .uri("/api/notes/" + note.getId().noteIdValue())
+                .headers(h -> h.setBearerAuth(token))
+                .body(new UpdateNoteDto("new title", "new content"))
+                .exchange()
+                .expectStatus()
+                .isNoContent()
+                .expectBody(Void.class);
 
         var updatedNote = noteRepository.findById(note.getId());
         assertThat(updatedNote).isPresent();
@@ -128,15 +128,14 @@ class NoteControllerIntegrationTest {
 
     @Test
     void deleteByNoteIdValue_then_delete_note() {
-        var deleteNoteEntity = testRestTemplate.exchange(
-                "/api/notes/{id}",
-                HttpMethod.DELETE,
-                new HttpEntity<>(headers),
-                Void.class,
-                note.getId().noteIdValue()
-        );
-
-        assertThat(deleteNoteEntity.getStatusCode().value()).isEqualTo(204);
+        restTestClient
+                .delete()
+                .uri("/api/notes/" + note.getId().noteIdValue())
+                .headers(h -> h.setBearerAuth(token))
+                .exchange()
+                .expectStatus()
+                .isNoContent()
+                .expectBody(Void.class);
 
         var deletedNote = noteRepository.findById(note.getId());
         assertThat(deletedNote).isNotPresent();

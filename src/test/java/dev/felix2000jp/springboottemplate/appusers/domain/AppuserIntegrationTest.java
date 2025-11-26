@@ -34,7 +34,8 @@ class AppuserIntegrationTest {
         scenario
                 .stimulate(() -> appuserRepository.save(appuser))
                 .andWaitForEventOfType(AppuserDeletedEvent.class)
-                .toArriveAndVerify(event -> assertThat(event.appuserId()).isEqualTo(appuser.getId().value()));
+                .matchingMappedValue(AppuserDeletedEvent::appuserId, appuser.getId().value())
+                .toArrive();
 
         assertThat(appuser.getDomainEvents()).isEmpty();
     }

@@ -4,6 +4,9 @@ spring:
   docker:
     compose:
       enabled: true
+  devtools:
+    livereload:
+      enabled: true
   jpa:
     hibernate:
       ddl-auto: validate
@@ -24,10 +27,6 @@ management:
   metrics:
     enable:
       all: false
-  otlp:
-    metrics:
-      export:
-        url: http://localhost:4318/v1/metrics
 
 jwt:
   rsa:
