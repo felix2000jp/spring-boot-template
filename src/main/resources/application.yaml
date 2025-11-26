@@ -24,9 +24,6 @@ management:
     web:
       exposure:
         include: health
-  metrics:
-    enable:
-      all: false
 
 jwt:
   rsa:
