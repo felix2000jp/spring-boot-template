@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -16,6 +17,7 @@ class AppuserExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(AppuserExceptionHandler.class);
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(AppuserNotFoundException.class)
     ResponseEntity<ProblemDetail> handleAppuserNotFoundException(AppuserNotFoundException ex) {
         var problemDetails = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
@@ -24,6 +26,7 @@ class AppuserExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.of(problemDetails).build();
     }
 
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(AppuserAlreadyExistsException.class)
     ResponseEntity<ProblemDetail> handleAppuserConflictException(AppuserAlreadyExistsException ex) {
         var problemDetails = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
