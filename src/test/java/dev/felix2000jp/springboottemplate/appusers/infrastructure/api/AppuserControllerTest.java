@@ -2,6 +2,7 @@ package dev.felix2000jp.springboottemplate.appusers.infrastructure.api;
 
 import dev.felix2000jp.springboottemplate.appusers.application.AppuserService;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserDto;
+import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserTokenDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserAlreadyExistsException;
@@ -219,15 +220,16 @@ class AppuserControllerTest {
     @Test
     @WithMockUser
     void login_then_return_200_and_token() throws Exception {
-        var appuserToken = "sample-jwt-token";
+        var appuserTokenDto = new AppuserTokenDto("sample-jwt-token");
+        var expectedResponse = jsonMapper.writeValueAsString(appuserTokenDto);
 
-        when(appuserService.login()).thenReturn(appuserToken);
+        when(appuserService.login()).thenReturn(appuserTokenDto);
 
         var request = post("/api/appusers/login");
         mockMvc
                 .perform(request.with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().string(appuserToken));
+                .andExpect(content().json(expectedResponse));
     }
 
 }

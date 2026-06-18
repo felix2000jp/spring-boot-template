@@ -54,6 +54,11 @@ public class SecurityService {
 
     public SecurityUser loadUserFromSecurityContext() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null) {
+            throw new AccessDeniedException("Missing authentication");
+        }
+
         var principal = authentication.getPrincipal();
 
         if (principal instanceof SecurityUser securityUser) {

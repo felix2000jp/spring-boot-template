@@ -1,5 +1,6 @@
 package dev.felix2000jp.springboottemplate.system.security;
 
+import org.jspecify.annotations.NonNull;
 import org.springframework.modulith.NamedInterface;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,7 +17,7 @@ public record SecurityUser(
 ) implements UserDetails {
 
     @Override
-    public String getUsername() {
+    public @NonNull String getUsername() {
         return username;
     }
 
@@ -26,7 +27,7 @@ public record SecurityUser(
     }
 
     @Override
-    public Collection<SecurityScope> getAuthorities() {
+    public @NonNull Collection<SecurityScope> getAuthorities() {
         return scopes;
     }
 
