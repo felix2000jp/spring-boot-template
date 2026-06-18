@@ -7,12 +7,9 @@ import dev.felix2000jp.springboottemplate.notes.application.dtos.NoteListDto;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.UpdateNoteDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +31,6 @@ class NoteController {
 
     @Operation(summary = "List notes")
     @ApiResponse(responseCode = "200")
-    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
     @GetMapping
     ResponseEntity<NoteListDto> get() {
         var body = noteService.get();
@@ -43,9 +39,9 @@ class NoteController {
 
     @Operation(summary = "Get note")
     @ApiResponse(responseCode = "200")
-    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @GetMapping("/{noteIdValue}")
+    @ApiResponse(responseCode = "400")
+    @ApiResponse(responseCode = "404")
+    @GetMapping(value = "/{noteIdValue}")
     ResponseEntity<NoteDto> getByNoteIdValue(
             @Parameter(description = "Note identifier.", example = "42b94c31-ae1c-48bf-aec7-71a58d81f69a")
             @PathVariable UUID noteIdValue
@@ -56,10 +52,9 @@ class NoteController {
 
     @Operation(summary = "Create note")
     @ApiResponse(responseCode = "201")
-    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    @ApiResponse(responseCode = "400")
     @PostMapping
-    ResponseEntity<NoteDto> create(@RequestBody @Valid CreateNoteDto createNoteDto) {
+    ResponseEntity<Void> create(@RequestBody @Valid CreateNoteDto createNoteDto) {
         noteService.create(createNoteDto);
         var location = URI.create("/api/notes");
         return ResponseEntity.created(location).build();
@@ -67,10 +62,9 @@ class NoteController {
 
     @Operation(summary = "Update note")
     @ApiResponse(responseCode = "204")
-    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @PutMapping("/{noteIdValue}")
+    @ApiResponse(responseCode = "400")
+    @ApiResponse(responseCode = "404")
+    @PutMapping(value = "/{noteIdValue}")
     ResponseEntity<Void> update(
             @Parameter(description = "Note identifier.", example = "42b94c31-ae1c-48bf-aec7-71a58d81f69a")
             @PathVariable UUID noteIdValue,
@@ -82,8 +76,8 @@ class NoteController {
 
     @Operation(summary = "Delete note")
     @ApiResponse(responseCode = "204")
-    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    @ApiResponse(responseCode = "400")
+    @ApiResponse(responseCode = "404")
     @DeleteMapping("/{noteIdValue}")
     ResponseEntity<Void> deleteByNoteIdValue(
             @Parameter(description = "Note identifier.", example = "42b94c31-ae1c-48bf-aec7-71a58d81f69a")

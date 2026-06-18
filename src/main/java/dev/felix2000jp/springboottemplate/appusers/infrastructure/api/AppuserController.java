@@ -7,11 +7,10 @@ import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuse
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.http.ProblemDetail;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +31,7 @@ class AppuserController {
 
     @Operation(summary = "Get current app user")
     @ApiResponse(responseCode = "200")
-    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    @ApiResponse(responseCode = "404")
     @GetMapping
     ResponseEntity<AppuserDto> get() {
         var body = appuserService.get();
@@ -42,8 +40,8 @@ class AppuserController {
 
     @Operation(summary = "Create app user")
     @ApiResponse(responseCode = "201")
-    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ApiResponse(responseCode = "409", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    @ApiResponse(responseCode = "400")
+    @ApiResponse(responseCode = "409")
     @PostMapping
     ResponseEntity<Void> create(@Valid @RequestBody CreateAppuserDto createAppuserDto) {
         appuserService.create(createAppuserDto);
@@ -53,9 +51,9 @@ class AppuserController {
 
     @Operation(summary = "Update current app user")
     @ApiResponse(responseCode = "204")
-    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ApiResponse(responseCode = "409", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    @ApiResponse(responseCode = "400")
+    @ApiResponse(responseCode = "404")
+    @ApiResponse(responseCode = "409")
     @PutMapping
     ResponseEntity<Void> update(@Valid @RequestBody UpdateAppuserDto updateAppuserDto) {
         appuserService.update(updateAppuserDto);
@@ -64,8 +62,7 @@ class AppuserController {
 
     @Operation(summary = "Delete current app user")
     @ApiResponse(responseCode = "204")
-    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
+    @ApiResponse(responseCode = "404")
     @DeleteMapping
     ResponseEntity<Void> delete() {
         appuserService.delete();
@@ -74,8 +71,7 @@ class AppuserController {
 
     @Operation(summary = "Create bearer token")
     @ApiResponse(responseCode = "200")
-    @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ProblemDetail.class)))
-    @PostMapping("/login")
+    @PostMapping(value = "/login")
     ResponseEntity<AppuserTokenDto> login() {
         var body = appuserService.login();
         return ResponseEntity.ok(body);
