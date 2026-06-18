@@ -35,7 +35,7 @@ class SecurityConfiguration {
     private RSAPrivateKey privateKey;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) {
         return http
                 .securityMatcher("/api/**")
                 .csrf(AbstractHttpConfigurer::disable)
