@@ -5,9 +5,6 @@ import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserTokenDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
-import dev.felix2000jp.springboottemplate.system.openapi.ApiResponseBadRequest;
-import dev.felix2000jp.springboottemplate.system.openapi.ApiResponseConflict;
-import dev.felix2000jp.springboottemplate.system.openapi.ApiResponseNotFound;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,8 +29,7 @@ class AppuserController {
     }
 
     @Operation(summary = "Get current app user")
-    @ApiResponse(responseCode = "200")
-    @ApiResponseNotFound
+    @ApiResponse(responseCode = "200", description = "Current app user returned.")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<AppuserDto> get() {
         var body = appuserService.get();
@@ -41,9 +37,7 @@ class AppuserController {
     }
 
     @Operation(summary = "Create app user")
-    @ApiResponse(responseCode = "201")
-    @ApiResponseBadRequest
-    @ApiResponseConflict
+    @ApiResponse(responseCode = "201", description = "App user created.")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> create(@Valid @RequestBody CreateAppuserDto createAppuserDto) {
         appuserService.create(createAppuserDto);
@@ -52,10 +46,7 @@ class AppuserController {
     }
 
     @Operation(summary = "Update current app user")
-    @ApiResponse(responseCode = "204")
-    @ApiResponseBadRequest
-    @ApiResponseNotFound
-    @ApiResponseConflict
+    @ApiResponse(responseCode = "204", description = "Current app user updated.")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> update(@Valid @RequestBody UpdateAppuserDto updateAppuserDto) {
         appuserService.update(updateAppuserDto);
@@ -63,8 +54,7 @@ class AppuserController {
     }
 
     @Operation(summary = "Delete current app user")
-    @ApiResponse(responseCode = "204")
-    @ApiResponseNotFound
+    @ApiResponse(responseCode = "204", description = "Current app user deleted.")
     @DeleteMapping
     ResponseEntity<Void> delete() {
         appuserService.delete();
@@ -72,7 +62,7 @@ class AppuserController {
     }
 
     @Operation(summary = "Create bearer token")
-    @ApiResponse(responseCode = "200")
+    @ApiResponse(responseCode = "200", description = "Bearer token created.")
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<AppuserTokenDto> login() {
         var body = appuserService.login();

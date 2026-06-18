@@ -5,8 +5,6 @@ import dev.felix2000jp.springboottemplate.notes.application.dtos.CreateNoteDto;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.NoteDto;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.NoteListDto;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.UpdateNoteDto;
-import dev.felix2000jp.springboottemplate.system.openapi.ApiResponseBadRequest;
-import dev.felix2000jp.springboottemplate.system.openapi.ApiResponseNotFound;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,7 +31,7 @@ class NoteController {
     }
 
     @Operation(summary = "List notes")
-    @ApiResponse(responseCode = "200")
+    @ApiResponse(responseCode = "200", description = "Notes returned.")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<NoteListDto> get() {
         var body = noteService.get();
@@ -41,9 +39,7 @@ class NoteController {
     }
 
     @Operation(summary = "Get note")
-    @ApiResponse(responseCode = "200")
-    @ApiResponseBadRequest
-    @ApiResponseNotFound
+    @ApiResponse(responseCode = "200", description = "Note returned.")
     @GetMapping(value = "/{noteIdValue}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<NoteDto> getByNoteIdValue(
             @Parameter(description = "Note identifier.", example = "42b94c31-ae1c-48bf-aec7-71a58d81f69a")
@@ -54,8 +50,7 @@ class NoteController {
     }
 
     @Operation(summary = "Create note")
-    @ApiResponse(responseCode = "201")
-    @ApiResponseBadRequest
+    @ApiResponse(responseCode = "201", description = "Note created.")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> create(@RequestBody @Valid CreateNoteDto createNoteDto) {
         noteService.create(createNoteDto);
@@ -64,9 +59,7 @@ class NoteController {
     }
 
     @Operation(summary = "Update note")
-    @ApiResponse(responseCode = "204")
-    @ApiResponseBadRequest
-    @ApiResponseNotFound
+    @ApiResponse(responseCode = "204", description = "Note updated.")
     @PutMapping(value = "/{noteIdValue}", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> update(
             @Parameter(description = "Note identifier.", example = "42b94c31-ae1c-48bf-aec7-71a58d81f69a")
@@ -78,9 +71,7 @@ class NoteController {
     }
 
     @Operation(summary = "Delete note")
-    @ApiResponse(responseCode = "204")
-    @ApiResponseBadRequest
-    @ApiResponseNotFound
+    @ApiResponse(responseCode = "204", description = "Note deleted.")
     @DeleteMapping("/{noteIdValue}")
     ResponseEntity<Void> deleteByNoteIdValue(
             @Parameter(description = "Note identifier.", example = "42b94c31-ae1c-48bf-aec7-71a58d81f69a")
