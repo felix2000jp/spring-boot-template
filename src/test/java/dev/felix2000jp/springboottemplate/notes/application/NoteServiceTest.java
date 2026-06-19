@@ -136,9 +136,8 @@ class NoteServiceTest {
 
         noteService.update(note.getId().noteIdValue(), updateNoteDto);
 
-        verify(noteRepository).save(noteCaptor.capture());
-        assertThat(noteCaptor.getValue().getTitle().value()).isEqualTo(updateNoteDto.title());
-        assertThat(noteCaptor.getValue().getContent().value()).isEqualTo(updateNoteDto.content());
+        assertThat(note.getTitle().value()).isEqualTo(updateNoteDto.title());
+        assertThat(note.getContent().value()).isEqualTo(updateNoteDto.content());
     }
 
     @Test

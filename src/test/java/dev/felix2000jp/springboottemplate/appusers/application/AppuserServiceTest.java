@@ -111,9 +111,8 @@ class AppuserServiceTest {
 
         appuserService.update(updateAppuserDto);
 
-        verify(appuserRepository).save(appuserCaptor.capture());
-        assertThat(appuserCaptor.getValue().getUsername().value()).isEqualTo("new username");
-        assertThat(appuserCaptor.getValue().getPassword().value()).isEqualTo("encoded-password");
+        assertThat(appuser.getUsername().value()).isEqualTo("new username");
+        assertThat(appuser.getPassword().value()).isEqualTo("encoded-password");
     }
 
     @Test

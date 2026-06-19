@@ -76,7 +76,6 @@ public class NoteService {
 
         noteToUpdate.setTitle(new Title(updateNoteDto.title()));
         noteToUpdate.setContent(new Content(updateNoteDto.content()));
-        noteRepository.save(noteToUpdate);
         log.info("Note with id {} updated", noteToUpdate.getId());
     }
 

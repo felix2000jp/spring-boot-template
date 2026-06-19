@@ -84,7 +84,6 @@ public class AppuserService {
 
         appuserToUpdate.setUsername(usernameValueObject);
         appuserToUpdate.setPassword(passwordValueObject);
-        appuserRepository.save(appuserToUpdate);
         log.info("Appuser with id {} updated", appuserToUpdate.getId());
     }
 
