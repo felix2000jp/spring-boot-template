@@ -48,6 +48,32 @@ class AppuserControllerTest {
 
     @Test
     @WithMockUser(authorities = SecurityScope.MEMBER_AUTHORITY)
+    void get_given_unexpected_exception_then_return_generic_problem_detail() throws Exception {
+        when(appuserService.get()).thenThrow(new IllegalStateException("Internal implementation detail"));
+
+        mockMvc.perform(get("/api/appusers"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Internal Server Error"))
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.detail").value("An error occurred while processing the request"))
+                .andExpect(jsonPath("$.instance").value("/api/appusers"));
+    }
+
+    @Test
+    void register_given_malformed_json_then_return_spring_problem_detail() throws Exception {
+        mockMvc.perform(post("/api/appusers").contentType(MediaType.APPLICATION_JSON).content("{"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON))
+                .andExpect(jsonPath("$.title").value("Bad Request"))
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.instance").value("/api/appusers"));
+
+        verifyNoInteractions(appuserService);
+    }
+
+    @Test
+    @WithMockUser(authorities = SecurityScope.MEMBER_AUTHORITY)
     void get_then_return_200_and_appuser() throws Exception {
         var appuserDto = new AppuserDto(UUID.randomUUID(), "username", List.of(SecurityScope.MEMBER.name()));
         var expectedResponse = jsonMapper.writeValueAsString(appuserDto);
