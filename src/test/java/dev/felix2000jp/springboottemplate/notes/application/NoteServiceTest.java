@@ -46,7 +46,7 @@ class NoteServiceTest {
 
     @BeforeEach
     void setUp() {
-        user = new SecurityUser(UUID.randomUUID(), "username", "password", Set.of(SecurityScope.APPLICATION));
+        user = new SecurityUser(UUID.randomUUID(), "username", "password", Set.of(SecurityScope.MEMBER));
 
         when(securityService.loadUserFromSecurityContext()).thenReturn(user);
     }

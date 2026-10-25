@@ -4,6 +4,7 @@ import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
+import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -63,7 +64,7 @@ class AppuserTest {
         appuser.addApplicationScope();
 
         assertThat(appuser.getScopes()).hasSize(1);
-        assertThat(appuser.getScopes()).contains(new Scope("APPLICATION"));
+        assertThat(appuser.getScopes()).contains(new Scope(SecurityScope.MEMBER.name()));
     }
 
     @Test

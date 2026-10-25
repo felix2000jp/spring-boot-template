@@ -5,12 +5,14 @@ import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.AppuserTokenDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
+import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,23 +32,16 @@ class AppuserController {
 
     @Operation(summary = "Get current app user")
     @ApiResponse(responseCode = "200", description = "Current app user returned.")
+    @PreAuthorize("hasAuthority('" + SecurityScope.MEMBER_AUTHORITY + "')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<AppuserDto> get() {
         var body = appuserService.get();
         return ResponseEntity.ok(body);
     }
 
-    @Operation(summary = "Create app user")
-    @ApiResponse(responseCode = "201", description = "App user created.")
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<Void> create(@Valid @RequestBody CreateAppuserDto createAppuserDto) {
-        appuserService.create(createAppuserDto);
-        var location = URI.create("/api/appusers");
-        return ResponseEntity.created(location).build();
-    }
-
     @Operation(summary = "Update current app user")
     @ApiResponse(responseCode = "204", description = "Current app user updated.")
+    @PreAuthorize("hasAuthority('" + SecurityScope.MEMBER_AUTHORITY + "')")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> update(@Valid @RequestBody UpdateAppuserDto updateAppuserDto) {
         appuserService.update(updateAppuserDto);
@@ -55,10 +50,20 @@ class AppuserController {
 
     @Operation(summary = "Delete current app user")
     @ApiResponse(responseCode = "204", description = "Current app user deleted.")
+    @PreAuthorize("hasAuthority('" + SecurityScope.MEMBER_AUTHORITY + "')")
     @DeleteMapping
     ResponseEntity<Void> delete() {
         appuserService.delete();
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Register app user")
+    @ApiResponse(responseCode = "201", description = "App user created.")
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Void> register(@Valid @RequestBody CreateAppuserDto createAppuserDto) {
+        appuserService.register(createAppuserDto);
+        var location = URI.create("/api/appusers");
+        return ResponseEntity.created(location).build();
     }
 
     @Operation(summary = "Create bearer token")

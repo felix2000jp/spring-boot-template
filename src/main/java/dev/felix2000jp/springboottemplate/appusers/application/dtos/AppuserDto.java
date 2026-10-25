@@ -14,7 +14,7 @@ public record AppuserDto(
         @Schema(description = "Unique username.", example = "joao")
         String username,
 
-        @ArraySchema(schema = @Schema(description = "Granted application scope.", example = "APPLICATION"))
+        @ArraySchema(schema = @Schema(description = "Granted application scopes.", example = "MEMBER"))
         List<String> scopes
 ) {
 }

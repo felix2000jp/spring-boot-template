@@ -57,7 +57,7 @@ class AppuserControllerIntegrationTest {
         token = securityService.generateToken(
                 appuser.getId().value(),
                 appuser.getUsername().value(),
-                List.of(SecurityScope.APPLICATION)
+                List.of(SecurityScope.MEMBER)
         );
     }
 
@@ -74,22 +74,6 @@ class AppuserControllerIntegrationTest {
                 .returnResult();
 
         assertThat(getAppuserEntity.getResponseBody()).isNotNull();
-    }
-
-    @Test
-    void create_then_create_appuser() {
-        restTestClient
-                .post()
-                .uri("/api/appusers")
-                .headers(h -> h.setBearerAuth(token))
-                .body(new CreateAppuserDto("new username", "password"))
-                .exchange()
-                .expectStatus()
-                .isCreated()
-                .expectBody(Void.class);
-
-        var createdAppuser = appuserRepository.findByUsername(new Username("new username"));
-        assertThat(createdAppuser).isPresent();
     }
 
     @Test
@@ -122,6 +106,22 @@ class AppuserControllerIntegrationTest {
 
         var deletedAppuser = appuserRepository.findById(appuser.getId());
         assertThat(deletedAppuser).isNotPresent();
+    }
+
+    @Test
+    void register_then_create_appuser() {
+        restTestClient
+                .post()
+                .uri("/api/appusers")
+                .headers(h -> h.setBearerAuth(token))
+                .body(new CreateAppuserDto("new username", "password"))
+                .exchange()
+                .expectStatus()
+                .isCreated()
+                .expectBody(Void.class);
+
+        var createdAppuser = appuserRepository.findByUsername(new Username("new username"));
+        assertThat(createdAppuser).isPresent();
     }
 
     @Test

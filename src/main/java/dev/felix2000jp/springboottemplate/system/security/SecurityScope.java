@@ -1,6 +1,5 @@
 package dev.felix2000jp.springboottemplate.system.security;
 
-import org.jspecify.annotations.NonNull;
 import org.springframework.modulith.NamedInterface;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -8,10 +7,13 @@ import org.springframework.security.core.GrantedAuthority;
 public enum SecurityScope implements GrantedAuthority {
 
     ADMIN,
-    APPLICATION;
+    MEMBER;
+
+    public static final String ADMIN_AUTHORITY = "SCOPE_ADMIN";
+    public static final String MEMBER_AUTHORITY = "SCOPE_MEMBER";
 
     @Override
-    public @NonNull String getAuthority() {
+    public String getAuthority() {
         return "SCOPE_" + name();
     }
 

@@ -69,31 +69,6 @@ class AppuserServiceTest {
     }
 
     @Test
-    void create_given_dto_then_create_appuser() {
-        var createAppuserDto = new CreateAppuserDto("username", "password");
-
-        when(appuserRepository.existsByUsername(new Username(createAppuserDto.username()))).thenReturn(false);
-        when(securityService.generateEncodedPassword(createAppuserDto.password())).thenReturn("encoded-password");
-
-        appuserService.create(createAppuserDto);
-
-        verify(appuserRepository).save(appuserCaptor.capture());
-
-        assertThat(appuserCaptor.getValue().getUsername().value()).isEqualTo(createAppuserDto.username());
-        assertThat(appuserCaptor.getValue().getPassword().value()).isEqualTo("encoded-password");
-    }
-
-    @Test
-    void create_given_dto_with_duplicate_username_then_throw_exception() {
-        var createAppuserDto = new CreateAppuserDto("username", "password");
-
-        when(appuserRepository.existsByUsername(new Username(createAppuserDto.username()))).thenReturn(true);
-        when(securityService.generateEncodedPassword(createAppuserDto.password())).thenReturn("encoded-password");
-
-        assertThatThrownBy(() -> appuserService.create(createAppuserDto)).isInstanceOf(AppuserAlreadyExistsException.class);
-    }
-
-    @Test
     void update_given_dto_then_update_username_and_password() {
         var securityUser = new SecurityUser(UUID.randomUUID(), "username", "password", Set.of());
         var appuser = Appuser.from(
@@ -161,6 +136,31 @@ class AppuserServiceTest {
         when(appuserRepository.findById(new AppuserId(securityUser.id()))).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> appuserService.delete()).isInstanceOf(AppuserNotFoundException.class);
+    }
+
+    @Test
+    void register_given_dto_then_create_appuser() {
+        var createAppuserDto = new CreateAppuserDto("username", "password");
+
+        when(appuserRepository.existsByUsername(new Username(createAppuserDto.username()))).thenReturn(false);
+        when(securityService.generateEncodedPassword(createAppuserDto.password())).thenReturn("encoded-password");
+
+        appuserService.register(createAppuserDto);
+
+        verify(appuserRepository).save(appuserCaptor.capture());
+
+        assertThat(appuserCaptor.getValue().getUsername().value()).isEqualTo(createAppuserDto.username());
+        assertThat(appuserCaptor.getValue().getPassword().value()).isEqualTo("encoded-password");
+    }
+
+    @Test
+    void register_given_dto_with_duplicate_username_then_throw_exception() {
+        var createAppuserDto = new CreateAppuserDto("username", "password");
+
+        when(appuserRepository.existsByUsername(new Username(createAppuserDto.username()))).thenReturn(true);
+        when(securityService.generateEncodedPassword(createAppuserDto.password())).thenReturn("encoded-password");
+
+        assertThatThrownBy(() -> appuserService.register(createAppuserDto)).isInstanceOf(AppuserAlreadyExistsException.class);
     }
 
     @Test

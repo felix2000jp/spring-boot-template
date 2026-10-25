@@ -7,6 +7,7 @@ import dev.felix2000jp.springboottemplate.appusers.application.dtos.CreateAppuse
 import dev.felix2000jp.springboottemplate.appusers.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springboottemplate.appusers.domain.exceptions.AppuserNotFoundException;
+import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -43,7 +44,7 @@ class AppuserControllerTest {
     @Test
     @WithMockUser
     void get_then_return_200_and_appuser() throws Exception {
-        var appuserDto = new AppuserDto(UUID.randomUUID(), "username", List.of("APPLICATION"));
+        var appuserDto = new AppuserDto(UUID.randomUUID(), "username", List.of(SecurityScope.MEMBER.name()));
         var expectedResponse = jsonMapper.writeValueAsString(appuserDto);
 
         when(appuserService.get()).thenReturn(appuserDto);
@@ -68,68 +69,6 @@ class AppuserControllerTest {
                 .andExpect(jsonPath("$.title").value("Not Found"))
                 .andExpect(jsonPath("$.detail").value(exception.getMessage()))
                 .andExpect(jsonPath("$.status").value(404));
-    }
-
-    @Test
-    @WithMockUser
-    void create_then_return_201_and_location_header() throws Exception {
-        var createAppuserDto = new CreateAppuserDto("username", "password");
-
-        var body = jsonMapper.writeValueAsString(createAppuserDto);
-
-        var request = post("/api/appusers").contentType(MediaType.APPLICATION_JSON).content(body);
-        mockMvc
-                .perform(request.with(csrf()))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("LOCATION", "/api/appusers"));
-    }
-
-    @Test
-    @WithMockUser
-    void create_given_duplicate_username_then_return_409() throws Exception {
-        var createAppuserDto = new CreateAppuserDto("username", "password");
-
-        var body = jsonMapper.writeValueAsString(createAppuserDto);
-
-        var exception = new AppuserAlreadyExistsException();
-        doThrow(exception).when(appuserService).create(createAppuserDto);
-
-        var request = post("/api/appusers").contentType(MediaType.APPLICATION_JSON).content(body);
-        mockMvc
-                .perform(request.with(csrf()))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.title").value("Conflict"))
-                .andExpect(jsonPath("$.detail").value(exception.getMessage()))
-                .andExpect(jsonPath("$.status").value(409));
-    }
-
-    @ParameterizedTest
-    @MethodSource
-    @WithMockUser
-    void create_given_invalid_body_then_return_400(String username, String password) throws Exception {
-        var createAppuserDto = new CreateAppuserDto(username, password);
-        var body = jsonMapper.writeValueAsString(createAppuserDto);
-        var request = post("/api/appusers").contentType(MediaType.APPLICATION_JSON).content(body);
-        mockMvc
-                .perform(request.with(csrf()))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.title").value("Bad Request"))
-                .andExpect(jsonPath("$.status").value(400));
-    }
-
-    private static Stream<Arguments> create_given_invalid_body_then_return_400() {
-        return Stream.of(
-                arguments(null, "password"),
-                arguments("", "password"),
-                arguments(" ", "password"),
-                arguments("a", "password"),
-                arguments("a".repeat(256), "password"),
-                arguments("username", null),
-                arguments("username", ""),
-                arguments("username", " "),
-                arguments("username", "a"),
-                arguments("username", "a".repeat(256))
-        );
     }
 
     @Test
@@ -215,6 +154,68 @@ class AppuserControllerTest {
                 .andExpect(jsonPath("$.title").value("Not Found"))
                 .andExpect(jsonPath("$.detail").value(exception.getMessage()))
                 .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    @WithMockUser
+    void register_then_return_201_and_location_header() throws Exception {
+        var createAppuserDto = new CreateAppuserDto("username", "password");
+
+        var body = jsonMapper.writeValueAsString(createAppuserDto);
+
+        var request = post("/api/appusers").contentType(MediaType.APPLICATION_JSON).content(body);
+        mockMvc
+                .perform(request.with(csrf()))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("LOCATION", "/api/appusers"));
+    }
+
+    @Test
+    @WithMockUser
+    void register_given_duplicate_username_then_return_409() throws Exception {
+        var createAppuserDto = new CreateAppuserDto("username", "password");
+
+        var body = jsonMapper.writeValueAsString(createAppuserDto);
+
+        var exception = new AppuserAlreadyExistsException();
+        doThrow(exception).when(appuserService).register(createAppuserDto);
+
+        var request = post("/api/appusers").contentType(MediaType.APPLICATION_JSON).content(body);
+        mockMvc
+                .perform(request.with(csrf()))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title").value("Conflict"))
+                .andExpect(jsonPath("$.detail").value(exception.getMessage()))
+                .andExpect(jsonPath("$.status").value(409));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    @WithMockUser
+    void register_given_invalid_body_then_return_400(String username, String password) throws Exception {
+        var createAppuserDto = new CreateAppuserDto(username, password);
+        var body = jsonMapper.writeValueAsString(createAppuserDto);
+        var request = post("/api/appusers").contentType(MediaType.APPLICATION_JSON).content(body);
+        mockMvc
+                .perform(request.with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Bad Request"))
+                .andExpect(jsonPath("$.status").value(400));
+    }
+
+    private static Stream<Arguments> register_given_invalid_body_then_return_400() {
+        return Stream.of(
+                arguments(null, "password"),
+                arguments("", "password"),
+                arguments(" ", "password"),
+                arguments("a", "password"),
+                arguments("a".repeat(256), "password"),
+                arguments("username", null),
+                arguments("username", ""),
+                arguments("username", " "),
+                arguments("username", "a"),
+                arguments("username", "a".repeat(256))
+        );
     }
 
     @Test

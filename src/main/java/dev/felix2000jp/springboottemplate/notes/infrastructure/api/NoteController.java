@@ -5,6 +5,7 @@ import dev.felix2000jp.springboottemplate.notes.application.dtos.CreateNoteDto;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.NoteDto;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.NoteListDto;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.UpdateNoteDto;
+import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +34,7 @@ class NoteController {
 
     @Operation(summary = "List notes")
     @ApiResponse(responseCode = "200", description = "Notes returned.")
+    @PreAuthorize("hasAuthority('" + SecurityScope.MEMBER_AUTHORITY + "')")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<NoteListDto> get() {
         var body = noteService.get();
@@ -40,6 +43,7 @@ class NoteController {
 
     @Operation(summary = "Get note")
     @ApiResponse(responseCode = "200", description = "Note returned.")
+    @PreAuthorize("hasAuthority('" + SecurityScope.MEMBER_AUTHORITY + "')")
     @GetMapping(value = "/{noteIdValue}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<NoteDto> getByNoteIdValue(
             @Parameter(description = "Note identifier.", example = "42b94c31-ae1c-48bf-aec7-71a58d81f69a")
@@ -51,6 +55,7 @@ class NoteController {
 
     @Operation(summary = "Create note")
     @ApiResponse(responseCode = "201", description = "Note created.")
+    @PreAuthorize("hasAuthority('" + SecurityScope.MEMBER_AUTHORITY + "')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> create(@RequestBody @Valid CreateNoteDto createNoteDto) {
         noteService.create(createNoteDto);
@@ -60,6 +65,7 @@ class NoteController {
 
     @Operation(summary = "Update note")
     @ApiResponse(responseCode = "204", description = "Note updated.")
+    @PreAuthorize("hasAuthority('" + SecurityScope.MEMBER_AUTHORITY + "')")
     @PutMapping(value = "/{noteIdValue}", consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> update(
             @Parameter(description = "Note identifier.", example = "42b94c31-ae1c-48bf-aec7-71a58d81f69a")
@@ -72,6 +78,7 @@ class NoteController {
 
     @Operation(summary = "Delete note")
     @ApiResponse(responseCode = "204", description = "Note deleted.")
+    @PreAuthorize("hasAuthority('" + SecurityScope.MEMBER_AUTHORITY + "')")
     @DeleteMapping("/{noteIdValue}")
     ResponseEntity<Void> deleteByNoteIdValue(
             @Parameter(description = "Note identifier.", example = "42b94c31-ae1c-48bf-aec7-71a58d81f69a")
