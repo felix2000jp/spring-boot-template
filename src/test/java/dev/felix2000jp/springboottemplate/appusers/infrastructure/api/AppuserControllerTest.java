@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -259,6 +260,15 @@ class AppuserControllerTest {
                 .perform(request.with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedResponse));
+    }
+
+    @Test
+    void login_given_bearer_token_then_return_403() throws Exception {
+        mockMvc
+                .perform(post("/api/appusers/login").with(jwt().authorities(SecurityScope.MEMBER)))
+                .andExpect(status().isForbidden());
+
+        verifyNoInteractions(appuserService);
     }
 
     @Test
