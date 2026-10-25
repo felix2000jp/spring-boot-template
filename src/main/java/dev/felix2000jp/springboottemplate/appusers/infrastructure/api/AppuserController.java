@@ -66,9 +66,9 @@ class AppuserController {
         return ResponseEntity.created(location).build();
     }
 
-    @Operation(summary = "Create bearer token")
+    @Operation(summary = "Create bearer token", description = "Requires HTTP Basic authentication.")
     @ApiResponse(responseCode = "200", description = "Bearer token created.")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() and authentication instanceof T(org.springframework.security.authentication.UsernamePasswordAuthenticationToken)")
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<AppuserTokenDto> login() {
         var body = appuserService.login();
