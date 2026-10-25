@@ -22,7 +22,7 @@ class AppuserMapperTest {
                 new Username("username"),
                 new Password("password")
         );
-        appuser.addApplicationScope();
+        appuser.addMemberScope();
 
         var actual = appuserMapper.toDto(appuser);
 

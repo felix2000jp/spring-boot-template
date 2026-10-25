@@ -50,7 +50,7 @@ class AppuserControllerIntegrationTest {
                 new Username("username"),
                 new Password(securityService.generateEncodedPassword("password"))
         );
-        appuser.addApplicationScope();
+        appuser.addMemberScope();
 
         appuserRepository.save(appuser);
 

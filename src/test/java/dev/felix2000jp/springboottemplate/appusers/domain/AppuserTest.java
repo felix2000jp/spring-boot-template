@@ -55,13 +55,13 @@ class AppuserTest {
     }
 
     @Test
-    void addApplicationScope_then_add_application_scope() {
+    void addMemberScope_then_add_member_scope() {
         var appuser = Appuser.from(
                 new AppuserId(UUID.randomUUID()),
                 new Username("username"),
                 new Password("password")
         );
-        appuser.addApplicationScope();
+        appuser.addMemberScope();
 
         assertThat(appuser.getScopes()).hasSize(1);
         assertThat(appuser.getScopes()).contains(new Scope(SecurityScope.MEMBER.name()));

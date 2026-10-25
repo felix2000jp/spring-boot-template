@@ -83,9 +83,9 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
         return scopes;
     }
 
-    public void addApplicationScope() {
-        var applicationScope = new Scope(SecurityScope.MEMBER.name());
-        scopes.add(applicationScope);
+    public void addMemberScope() {
+        var memberScope = new Scope(SecurityScope.MEMBER.name());
+        scopes.add(memberScope);
     }
 
     public void delete() {

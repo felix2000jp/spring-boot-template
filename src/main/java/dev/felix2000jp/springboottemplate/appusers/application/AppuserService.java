@@ -90,7 +90,7 @@ public class AppuserService {
                 new Username(createAppuserDto.username()),
                 new Password(securityService.generateEncodedPassword(createAppuserDto.password()))
         );
-        appuserToCreate.addApplicationScope();
+        appuserToCreate.addMemberScope();
 
         var doesUsernameExist = appuserRepository.existsByUsername(appuserToCreate.getUsername());
         if (doesUsernameExist) {
