@@ -113,7 +113,6 @@ class AppuserControllerIntegrationTest {
         restTestClient
                 .post()
                 .uri("/api/appusers")
-                .headers(h -> h.setBearerAuth(token))
                 .body(new CreateAppuserDto("new username", "password"))
                 .exchange()
                 .expectStatus()
