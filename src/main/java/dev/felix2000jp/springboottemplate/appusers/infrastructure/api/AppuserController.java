@@ -68,6 +68,7 @@ class AppuserController {
 
     @Operation(summary = "Create bearer token")
     @ApiResponse(responseCode = "200", description = "Bearer token created.")
+    @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<AppuserTokenDto> login() {
         var body = appuserService.login();
