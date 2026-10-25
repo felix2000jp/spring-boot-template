@@ -16,6 +16,8 @@ jobs:
   build-and-test-code:
     name: Build and test the code
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -27,11 +29,18 @@ jobs:
           cache: maven
       - name: Build and test code
         run: |
-          mvn -B clean verify
+          ./mvnw -B clean verify
           mkdir -p artifacts artifacts/otel artifacts/target
           cp Dockerfile artifacts
           cp otel/*.jar artifacts/otel
           cp target/*.jar artifacts/target
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: surefire-reports
+          path: target/surefire-reports
+          if-no-files-found: warn
       - name: Upload artifacts folder
         uses: actions/upload-artifact@v7
         with:
@@ -42,6 +51,9 @@ jobs:
     name: Build and push the image
     needs: [ build-and-test-code ]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Setup docker buildx
         uses: docker/setup-buildx-action@v4
