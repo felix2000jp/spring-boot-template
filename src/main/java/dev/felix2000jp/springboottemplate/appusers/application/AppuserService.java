@@ -47,24 +47,6 @@ public class AppuserService {
     }
 
     @Transactional
-    public void create(CreateAppuserDto createAppuserDto) {
-        var appuserToCreate = Appuser.from(
-                new AppuserId(UUID.randomUUID()),
-                new Username(createAppuserDto.username()),
-                new Password(securityService.generateEncodedPassword(createAppuserDto.password()))
-        );
-        appuserToCreate.addApplicationScope();
-
-        var doesUsernameExist = appuserRepository.existsByUsername(appuserToCreate.getUsername());
-        if (doesUsernameExist) {
-            throw new AppuserAlreadyExistsException();
-        }
-
-        appuserRepository.save(appuserToCreate);
-        log.info("Appuser with id {} created", appuserToCreate.getId());
-    }
-
-    @Transactional
     public void update(UpdateAppuserDto updateAppuserDto) {
         var user = securityService.loadUserFromSecurityContext();
         var idValueObject = new AppuserId(user.id());
@@ -99,6 +81,24 @@ public class AppuserService {
         appuserToDelete.delete();
         appuserRepository.delete(appuserToDelete);
         log.info("Appuser with id {} deleted", appuserToDelete.getId());
+    }
+
+    @Transactional
+    public void register(CreateAppuserDto createAppuserDto) {
+        var appuserToCreate = Appuser.from(
+                new AppuserId(UUID.randomUUID()),
+                new Username(createAppuserDto.username()),
+                new Password(securityService.generateEncodedPassword(createAppuserDto.password()))
+        );
+        appuserToCreate.addMemberScope();
+
+        var doesUsernameExist = appuserRepository.existsByUsername(appuserToCreate.getUsername());
+        if (doesUsernameExist) {
+            throw new AppuserAlreadyExistsException();
+        }
+
+        appuserRepository.save(appuserToCreate);
+        log.info("Appuser with id {} created", appuserToCreate.getId());
     }
 
     @Transactional(readOnly = true)

@@ -1,111 +1,215 @@
 # Spring Boot Template
 
-This project serves as template for new spring applications. It follows a modular monolith architecture enforced with
-the spring modulith package as well as a simplified onion architecture enforced with j-molecules. It currently has 3
-modules: auth (for auth and user management related stuff), notes (for note related stuff) and shared (for common stuff
-like configurations).
+A Java 25 / Spring Boot template built as a modular monolith, with PostgreSQL,
+Flyway migrations, HTTP Basic and JWT authentication, and an example notes API.
 
-Since this is a modular monolith, dependencies between modules are limited. These are only allowed through root level
-interfaces/classes (ex: `SecurityService.java`) and named interfaces (ex `AppuserDeletedEvent`). Also, inside modules a
-simplified onion architecture is used therefore inner layers must not depend on outer layers (domain -> application ->
-infrastructure).
+## Project structure
 
-## Authentication
+Application code lives under `dev.felix2000jp.springboottemplate`:
 
-This template has 2 different type of authentication: basic authentication (username and password) and bearer token
-authentication (JWT). It also uses sessions for the frontend as they safer and easier to use in this use case
+| Module | Responsibility |
+| --- | --- |
+| `appusers` | Registration, current-user management, credentials, and token issuance |
+| `notes` | Notes belonging to the current user |
+| `system` | Shared security services, configuration, and unexpected-error handling |
+| `sample` | Empty domain/application/infrastructure packages for a new module |
 
-The module `auth` is where everything related to authentication and authorization is. This projects uses the default
-configurations for both basic and bearer authentications apart from the fact that it disabled csrf and session state as
-they are not necessary.
+Feature modules use three layers:
 
-Also, Jwt authentication type requires a public and private secrets/keys in order to decode and encode the tokens. I
-have already generated the keys which are located in **resources/certificates**. To generate new keys follow these
-steps:
+- `domain`: aggregates, value objects, repository interfaces, and domain events.
+- `application`: use cases, DTOs, mapping, and event listeners.
+- `infrastructure`: HTTP controllers and persistence/security adapters.
 
+Spring Modulith verifies module boundaries in `ApplicationTest`. Cross-module
+access uses exposed module APIs and named interfaces, such as the shared security
+API and `AppuserDeletedEvent`. The layers have jMolecules onion architecture
+annotations, with its ArchUnit integration included in the test dependencies.
+
+Deleting an app user publishes a domain event. The notes module handles it
+asynchronously through Spring Modulith and removes that user's notes.
+
+## Run locally
+
+Requirements:
+
+- JDK 25.
+- Docker with Docker Compose support. Integration tests also use Docker through
+  Testcontainers.
+
+From the project root:
+
+```sh
+./mvnw spring-boot:run
 ```
-# create rsa key pair
-openssl genrsa -out keypair.pem 2048
 
-# extract public key
-openssl rsa -in keypair.pem -pubout -out public.pem
+Spring Boot's Docker Compose integration starts the PostgreSQL service defined in
+`compose.yaml`. The local database is `application-db`, with username and password
+`postgres`, exposed on port 5432. Flyway applies the migrations from
+`src/main/resources/db/migration`.
 
-# create private key in PKCS#8 format
-openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out private.pem
+The application uses port 8080 by default:
+
+- Swagger UI: <http://localhost:8080/swagger-ui/index.html>
+- OpenAPI document: <http://localhost:8080/v3/api-docs>
+- Health: <http://localhost:8080/actuator/health>
+
+To manage the database yourself, disable Compose integration with
+`SPRING_DOCKER_COMPOSE_ENABLED=false` and configure the datasource. Database and
+Flyway credentials are configured separately in `application.yaml`; override both
+when using different credentials.
+
+## Authentication and authorization
+
+The API is stateless and supports HTTP Basic and JWT Bearer authentication. Server
+sessions are disabled, and CSRF protection is disabled in the API filter chain.
+There is no frontend session authentication in this template.
+
+Authorization is declared on controller methods with `@PreAuthorize`. The filter
+chain permits requests through to those method checks. Add an explicit policy to
+every new protected endpoint.
+
+| Endpoint | Authentication and authorization |
+| --- | --- |
+| `POST /api/appusers` | Public registration |
+| `POST /api/appusers/login` | HTTP Basic credentials required; Bearer tokens are rejected |
+| `GET`, `PUT`, `DELETE /api/appusers` | Authenticated user with the `MEMBER` scope |
+| All `/api/notes` endpoints | Authenticated user with the `MEMBER` scope |
+
+New users receive `MEMBER`. Scope values in persistence, user DTOs, and JWT claims
+use the enum name, such as `MEMBER`. Spring authorities use the corresponding
+constant, such as `SecurityScope.MEMBER_AUTHORITY` (`SCOPE_MEMBER`). Both forms are
+defined centrally in `SecurityScope`. `ADMIN` does not automatically grant `MEMBER`.
+
+### Register, log in, and call the API
+
+```sh
+curl -i -X POST http://localhost:8080/api/appusers \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"joao","password":"correct-horse-battery-staple"}'
+
+curl -i -X POST http://localhost:8080/api/appusers/login \
+  --user 'joao:correct-horse-battery-staple'
 ```
 
-## Logs, traces and metrics
+Login returns a JSON object containing `token`. Tokens expire after four hours.
+Use the returned token to call protected endpoints:
 
-This template includes Spring Boot Actuator with both the health and metrics endpoints enabled.
+```sh
+curl http://localhost:8080/api/appusers \
+  -H 'Authorization: Bearer <token>'
 
-For storing and viewing logs, traces and metrics this template uses the Grafana LGTM stack with an OpenTelemetry
-Collector. As for capturing telemetry data, the OpenTelemetry Java Agent is configured to run alongside the application
-and publish the data to the collector via grpc.
+curl -i -X POST http://localhost:8080/api/notes \
+  -H 'Authorization: Bearer <token>' \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"Project checklist","content":"Review tests and documentation."}'
+```
 
-There is also the `RequestIdHeaderFilter` which creates a unique id for every http request and adds this id to both the
-response headers and the MDC. You use this id for correlating logs and requests. Note that this id only tracks the http
-request and therefore cannot be used for tracking the entire trace, for that purpose use the trace_id attribute.
+A valid Bearer token sent to `/api/appusers/login` receives 403. Missing or invalid
+Basic credentials receive 401. Token issuance requires credentials on every login;
+there is no refresh-token endpoint.
 
-The application uses the open telemetry java agent. To download it
-go [here](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases).
+### JWT keys
 
-## GitHub's configuration, actions and applications
+The default configuration reads RSA keys from `certs/public.pem` and
+`certs/private.pem`, relative to the working directory. The checked-in pair is for
+local development and tests. Use a separate pair for each deployed environment.
 
-This GitHub repository is a template repository. It is intended to be used as a start of point for new projects. As such
-it has some minimal configurations that can be extended further if needed.
+To generate a new pair in a separate directory:
 
-### GitHub configuration
+```sh
+mkdir -p /path/to/environment-certs
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 \
+  -out /path/to/environment-certs/private.pem
+openssl pkey -in /path/to/environment-certs/private.pem -pubout \
+  -out /path/to/environment-certs/public.pem
+```
 
-#### Merge rules
+Override the locations with `JWT_RSA_PUBLIC_KEY=file:/path/to/public.pem` and
+`JWT_RSA_PRIVATE_KEY=file:/path/to/private.pem`.
 
-To protect both the main branch and the git history a couple of rules are in place:
+## Error responses
 
-1. Only squash merges are allowed to the main branch
-2. Before merging changes to the main branch a pull request must be opened
-3. Before merging changes to the main branch all status checks must pass.
+Spring MVC errors and mapped domain exceptions use RFC 9457 Problem Details with
+`application/problem+json`. Domain handlers choose the HTTP status and public
+detail; Spring supplies the default title and request-path `instance`. Unexpected
+exceptions are logged and receive a generic 500 Problem Detail.
 
-#### Dependabot
+Domain failures are logged at warning level with stack traces. Unexpected failures
+are logged at error level. Built-in MVC exceptions use Spring's default logging.
 
-To help with keeping the application dependencies always up to date, this repository has dependabot configured to, on a
-weekly basis open PRs with version updates for both the maven and actions dependencies used.
+Authentication and authorization errors retain Spring Security's default formats:
+401 for missing/invalid credentials and 403 for insufficient access. Some responses
+have a Spring Boot JSON error body; Bearer errors can have an empty body with error
+information in the `WWW-Authenticate` header.
 
-### GitHub actions - CI/CD Workflow
+## Tests and build
 
-This workflow is made of 4 different jobs and its intent is to scan the code for vulnerabilities, build and test your
-changes and then to build a docker image with the resulting JAR file and push it to a registry.
+```sh
+./mvnw test
+./mvnw clean verify
+```
 
-#### Build and test the code
+Tests include domain/application unit tests, MVC tests using the production
+security configuration, PostgreSQL integration tests using Testcontainers, and
+module-boundary verification. Docker must be available for the integration tests.
 
-It sets up temurin JDK and maven and then runs the command "mvn clean verify". This command will compile the code, test
-it, package it in a JAR file. It then uploads the resulting JAR file, so it can be used in other jobs.
+## Logs, traces, and metrics
 
-#### Build and push the image
+Spring Boot Actuator is included. Only `/actuator/health` is exposed over HTTP by
+the current configuration.
 
-This job is dependent on [Build and test the code](#build-and-test-the-code).
+The Docker image starts the application with the OpenTelemetry Java agent from
+`otel/opentelemetry-javaagent.jar`. Running through Maven does not automatically
+attach that agent.
 
-It downloads the JAR file artifact and build a docker image with it. After building the image it pushes it to the
-registry. This step is configured to only run it is running on the main branch.
+`compose.yaml` also defines a Grafana LGTM service under the `production` Compose
+profile. To start the database and telemetry stack locally:
 
-#### Deploy the Application
+```sh
+docker compose --profile production up -d
+```
 
-This job is dependent on [Build and push the image](#build-and-push-the-image).
+Grafana is available at <http://localhost:3000>. OTLP ports 4317 and 4318 are exposed.
+To attach the agent to a local Maven run and export over OTLP/HTTP:
 
-In this step we should make the necessary changes to deploy the application to wherever it should be deployed.
+```sh
+OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318 \
+OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf \
+./mvnw spring-boot:run \
+  -Dspring-boot.run.jvmArguments='-javaagent:otel/opentelemetry-javaagent.jar'
+```
 
-### GitHub applications - Semantic PR
+For a containerized application, configure an OTLP endpoint reachable from that
+container. Use the telemetry trace identifiers for correlating requests and logs.
 
-It verifies your Pull Request title follows the conventional commit guidelines. For more information on the rules being
-enforced, take a look at
-the [angular commit message guidelines](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines).
+## Docker image
 
-- feat: A new feature
-- fix: A bug fix
-- docs: Documentation only changes
-- style: Changes that do not affect the meaning of the code (white-space, formatting, missing semicolons, etc...)
-- refactor: A code change that neither fixes a bug nor adds a feature
-- perf: A code change that improves performance
-- test: Adding missing tests or correcting existing tests
-- build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
-- ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
-- chore: Changes that don't modify the source code directly but are important for maintaining the project
-- revert: Revert existing code
+Build the application and image:
+
+```sh
+./mvnw clean verify
+docker build -t spring-boot-template:local .
+```
+
+The image runs as the `spring` user and includes the application JAR and telemetry
+agent. Mount your environment's certificates at `/certs`, readable by that user.
+Configure an accessible PostgreSQL datasource and Flyway credentials through the
+application's environment variables. The Compose file runs supporting services;
+it does not define an application container.
+
+## GitHub automation
+
+The workflow in `.github/workflows/ci-cd-workflow.yaml` runs for pushes to `main`
+and pull requests targeting `main`. It has two jobs:
+
+1. Run `mvn -B clean verify` on JDK 25 and upload the Dockerfile, application JAR,
+   and telemetry agent as artifacts.
+2. Download those artifacts, generate image metadata, and build the Docker image.
+   The image-publishing `push` input is currently commented out.
+
+No deployment job or dedicated vulnerability-scanning job is currently configured.
+Repository branch protection and merge rules are managed in GitHub settings.
+
+Dependabot checks Maven, Docker, and GitHub Actions dependencies weekly.
+`.github/semantic.yml` configures Conventional Commit prefixes for PR titles,
+including `feat`, `fix`, `docs`, `refactor`, `test`, `build`, `ci`, and `chore`.

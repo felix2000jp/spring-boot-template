@@ -4,6 +4,7 @@ import dev.felix2000jp.springboottemplate.appusers.domain.Appuser;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
+import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -21,13 +22,13 @@ class AppuserMapperTest {
                 new Username("username"),
                 new Password("password")
         );
-        appuser.addApplicationScope();
+        appuser.addMemberScope();
 
         var actual = appuserMapper.toDto(appuser);
 
         assertThat(actual.id()).isEqualTo(appuser.getId().value());
         assertThat(actual.username()).isEqualTo(appuser.getUsername().value());
-        assertThat(actual.scopes()).contains("APPLICATION");
+        assertThat(actual.scopes()).contains(SecurityScope.MEMBER.name());
     }
 
     @Test

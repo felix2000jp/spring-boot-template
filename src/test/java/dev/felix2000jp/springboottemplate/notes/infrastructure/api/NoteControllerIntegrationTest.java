@@ -55,7 +55,7 @@ class NoteControllerIntegrationTest {
         token = securityService.generateToken(
                 note.getId().appuserIdValue(),
                 "username",
-                List.of(SecurityScope.APPLICATION)
+                List.of(SecurityScope.MEMBER)
         );
     }
 

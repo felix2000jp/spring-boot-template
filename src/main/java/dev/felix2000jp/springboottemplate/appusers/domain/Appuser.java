@@ -5,6 +5,7 @@ import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Scope;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Username;
+import dev.felix2000jp.springboottemplate.system.security.SecurityScope;
 import jakarta.persistence.*;
 import org.jmolecules.ddd.types.AggregateRoot;
 import org.jmolecules.event.types.DomainEvent;
@@ -82,9 +83,9 @@ public class Appuser implements AggregateRoot<Appuser, AppuserId> {
         return scopes;
     }
 
-    public void addApplicationScope() {
-        var applicationScope = new Scope("APPLICATION");
-        scopes.add(applicationScope);
+    public void addMemberScope() {
+        var memberScope = new Scope(SecurityScope.MEMBER.name());
+        scopes.add(memberScope);
     }
 
     public void delete() {
