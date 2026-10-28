@@ -67,12 +67,13 @@ authentication, and the remaining user and notes endpoints require the `SCOPE_ME
 chain permits requests through to these method checks, so new protected endpoints must declare their authorization
 rules.
 
-JWT authentication uses a private RSA key to sign tokens and a public key to verify them. Tests and `TestApplication`
-load the included development keys from `src/test/resources/certificates` through test-only configuration. These keys
-are excluded from the application JAR and Docker image.
+JWT authentication uses a private RSA key to sign tokens and a public key to verify them. The default configuration
+loads keys from `classpath:certificates/private.pem` and `classpath:certificates/public.pem`. The included development
+keys are in `src/test/resources/certificates`, making them available to tests and `TestApplication` while excluding
+them from the application JAR and Docker image.
 
-Normal `Application` runs read `certs/private.pem` and `certs/public.pem`, relative to the working directory, unless
-overridden. Generate a separate pair for each deployed environment.
+Runs without test resources, including the packaged application, must configure external key locations. Generate a
+separate pair for each deployed environment.
 
 To generate a new pair, run the following commands from your project's root directory. These replace the existing keys:
 
@@ -86,7 +87,7 @@ openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out certs/private.
 openssl pkey -in certs/private.pem -pubout -out certs/public.pem
 ```
 
-For keys stored elsewhere, set `JWT_RSA_PRIVATE_KEY=file:/path/to/private.pem` and
+To use external keys, set `JWT_RSA_PRIVATE_KEY=file:/path/to/private.pem` and
 `JWT_RSA_PUBLIC_KEY=file:/path/to/public.pem`.
 
 ## API documentation
@@ -135,11 +136,8 @@ through the OpenTelemetry Logback appender, configured in `logback-spring.xml` a
 `LoggingConfiguration`.
 
 Traces include HTTP requests, Spring Security operations and Spring Modulith module calls and event handling.
-Asynchronous event handling remains connected to the originating request's trace. SQL operations, internal repository
-methods and domain methods do not automatically get individual spans.
-
-Trace sampling is set to 100% for development; adjust `management.tracing.sampling.probability` for your deployed
-environment.
+Asynchronous event handling remains connected to the originating request's trace. Trace sampling is set to 10% by
+default; adjust `management.tracing.sampling.probability` for your deployed environment.
 
 The included `compose.yaml` provides a Grafana LGTM stack for inspecting logs, traces and metrics locally. Start it
 with:
@@ -147,10 +145,6 @@ with:
 ```sh
 docker compose up -d
 ```
-
-Then run `TestApplication` or `./mvnw spring-boot:test-run` and open Grafana at <http://localhost:3000>. The Grafana
-stack is optional for local development and debugging; the application can run without it, though telemetry exporters
-may report connection errors when no collector is available.
 
 The configured OTLP/HTTP endpoints use `http://localhost:4318` with separate paths for each signal. To use another
 collector, override the following settings:
@@ -160,6 +154,10 @@ collector, override the following settings:
 | Traces  | `MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT` | `http://localhost:4318/v1/traces`  |
 | Logs    | `MANAGEMENT_OPENTELEMETRY_LOGGING_EXPORT_OTLP_ENDPOINT` | `http://localhost:4318/v1/logs`    |
 | Metrics | `MANAGEMENT_OTLP_METRICS_EXPORT_URL`                    | `http://localhost:4318/v1/metrics` |
+
+Telemetry export is disabled by default, so tests and local runs do not require the Grafana stack. Console logging
+remains enabled. To export telemetry to the running stack, set `management.tracing.export.otlp.enabled`,
+`management.logging.export.otlp.enabled` and `management.otlp.metrics.export.enabled` to `true` in `application.yaml`.
 
 ## GitHub's configuration, actions and applications
 
@@ -192,7 +190,7 @@ vulnerability-scanning or deployment job.
 #### Build and test the code
 
 It sets up Temurin JDK 25 and runs `./mvnw -B clean verify` using the included Maven Wrapper to compile, test and
-package the application. It uploads the Dockerfile and application JAR for the image-build job. Test reports from 
+package the application. It uploads the Dockerfile and application JAR for the image-build job. Test reports from
 `target/surefire-reports` are uploaded separately, including when the build fails, if reports are available.
 
 #### Build and push the image

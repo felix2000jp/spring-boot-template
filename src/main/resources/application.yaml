@@ -13,16 +13,18 @@ spring:
     user: postgres
     password: postgres
 management:
-  endpoints:
-    web:
-      exposure:
-        include: health
   tracing:
-    sampling:
-      probability: 1.0
+    export:
+      otlp:
+        enabled: false
+  logging:
+    export:
+      otlp:
+        enabled: false
   otlp:
     metrics:
       export:
+        enabled: false
         url: http://localhost:4318/v1/metrics
   opentelemetry:
     tracing:
