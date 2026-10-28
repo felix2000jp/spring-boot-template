@@ -12,13 +12,31 @@ spring:
     enabled: true
     user: postgres
     password: postgres
-
 management:
   endpoints:
     web:
       exposure:
         include: health
-
+  otlp:
+    metrics:
+      export:
+        url: http://localhost:4318/v1/metrics
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/traces
+    logging:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/logs
+  tracing:
+    sampling:
+      probability: 1.0
+jdbc:
+  includes:
+    - QUERY
+    - CONNECTION
 jwt:
   rsa:
     public-key: file:certs/public.pem
