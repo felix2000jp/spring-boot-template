@@ -1,6 +1,6 @@
 package dev.felix2000jp.springboottemplate.appusers.domain;
 
-import dev.felix2000jp.springboottemplate.TestcontainersConfiguration;
+import dev.felix2000jp.springboottemplate.system.configurations.TestcontainersConfiguration;
 import dev.felix2000jp.springboottemplate.appusers.domain.events.AppuserDeletedEvent;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.AppuserId;
 import dev.felix2000jp.springboottemplate.appusers.domain.valueobjects.Password;

@@ -27,8 +27,8 @@ following to match your project:
 
 The `sample` package provides a starting point for adding your own modules.
 
-To build and verify your new project, you need JDK 25 and Docker. Docker Compose is used for development services,
-and integration tests use Testcontainers to start PostgreSQL. The Maven Wrapper is included.
+To build and verify your new project, you need JDK 25 and Docker. Testcontainers starts PostgreSQL for integration tests
+and local development. The Maven Wrapper is included.
 
 From your new project's root directory, run:
 
@@ -39,11 +39,20 @@ From your new project's root directory, run:
 To start the application during development:
 
 ```sh
-./mvnw spring-boot:run
+./mvnw spring-boot:test-run
 ```
 
-Spring Boot starts PostgreSQL through the included `compose.yaml`. The development database is `application-db`,
-with username and password `postgres`, exposed on port 5432. The application listens on port 8080 by default.
+For IDE runs and debugging, launch `TestApplication` from `src/test/java`, using the project root as the working
+directory. It starts the application with `TestcontainersConfiguration`, which provisions a disposable PostgreSQL
+database on a random host port. `@ServiceConnection` supplies the database connection details to Spring Boot, including
+Flyway. The application listens on port 8080 by default.
+
+The database survives automatic DevTools restarts through `@RestartScope`. Stopping the application stops the container;
+the next launch starts with a fresh database.
+
+To connect to an existing database instead, run `Application` in your IDE or use `./mvnw spring-boot:run` and configure
+the datasource and Flyway connection settings in `application.yaml` or through environment variables. This launcher
+does not start containers.
 
 ## Authentication
 
@@ -118,24 +127,19 @@ When adding cross-module events, expose them through a named interface, as `Appu
 
 This template includes Spring Boot Actuator. Only `/actuator/health` is exposed over HTTP by the current configuration.
 
-For storing and viewing logs, traces and metrics this template uses the Grafana LGTM stack with an OpenTelemetry
-Collector. The OpenTelemetry Java agent captures telemetry from the application and exports it to the collector.
+The included OpenTelemetry Java agent captures logs, traces and metrics and exports them to an OpenTelemetry-compatible
+collector. The collector and telemetry backend are configured separately; this template does not start them.
 
-The OpenTelemetry agent and Grafana LGTM stack are optional when running or debugging the application locally.
-
-To start Grafana LGTM alongside PostgreSQL and attach the agent, run the following command. It enables the `production`
-Compose profile through Spring Boot and passes the agent option to the application JVM:
+The agent is optional when running or debugging the application locally. To attach it to a local Testcontainers run:
 
 ```sh
-./mvnw spring-boot:run \
-  -Dspring-boot.run.arguments='--spring.docker.compose.profiles.active=production' \
+./mvnw spring-boot:test-run \
   -Dspring-boot.run.jvmArguments='-javaagent:otel/opentelemetry-javaagent.jar'
 ```
 
-When running from an IDE, set `--spring.docker.compose.profiles.active=production` as a program argument and
-`-javaagent:otel/opentelemetry-javaagent.jar` as a VM option, using the project root as the working directory.
-
-Grafana is available at <http://localhost:3000>. The collector exposes OTLP ports 4317 (gRPC) and 4318 (HTTP).
+When running from an IDE, add `-javaagent:otel/opentelemetry-javaagent.jar` as a VM option, using the project root as
+the working directory. Set `OTEL_EXPORTER_OTLP_ENDPOINT` to your collector's URL and `OTEL_EXPORTER_OTLP_PROTOCOL` if a
+different protocol is needed. By default, the agent exports over OTLP/HTTP to `http://localhost:4318`.
 
 The Docker image attaches the included agent automatically using `-javaagent:otel.jar`, copying it from
 `otel/opentelemetry-javaagent.jar` during the build.
