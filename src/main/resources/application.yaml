@@ -17,6 +17,9 @@ management:
     web:
       exposure:
         include: health
+  tracing:
+    sampling:
+      probability: 1.0
   otlp:
     metrics:
       export:
@@ -30,14 +33,7 @@ management:
       export:
         otlp:
           endpoint: http://localhost:4318/v1/logs
-  tracing:
-    sampling:
-      probability: 1.0
-jdbc:
-  includes:
-    - QUERY
-    - CONNECTION
 jwt:
   rsa:
     public-key: classpath:certificates/public.pem
-    private-key: classpath:certificates/public.pem
+    private-key: classpath:certificates/private.pem

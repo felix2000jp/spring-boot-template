@@ -67,9 +67,12 @@ authentication, and the remaining user and notes endpoints require the `SCOPE_ME
 chain permits requests through to these method checks, so new protected endpoints must declare their authorization
 rules.
 
-JWT authentication uses a private RSA key to sign tokens and a public key to verify them. The default configuration
-reads `certs/private.pem` and `certs/public.pem`, relative to the working directory. The included keys are for
-development and tests; generate a separate pair for each deployed environment.
+JWT authentication uses a private RSA key to sign tokens and a public key to verify them. Tests and `TestApplication`
+load the included development keys from `src/test/resources/certificates` through test-only configuration. These keys
+are excluded from the application JAR and Docker image.
+
+Normal `Application` runs read `certs/private.pem` and `certs/public.pem`, relative to the working directory, unless
+overridden. Generate a separate pair for each deployed environment.
 
 To generate a new pair, run the following commands from your project's root directory. These replace the existing keys:
 
@@ -127,24 +130,36 @@ When adding cross-module events, expose them through a named interface, as `Appu
 
 This template includes Spring Boot Actuator. Only `/actuator/health` is exposed over HTTP by the current configuration.
 
-The included OpenTelemetry Java agent captures logs, traces and metrics and exports them to an OpenTelemetry-compatible
-collector. The collector and telemetry backend are configured separately; this template does not start them.
+Observability uses Spring Boot's OpenTelemetry starter with Micrometer for metrics and tracing. Logs are exported
+through the OpenTelemetry Logback appender, configured in `logback-spring.xml` and initialized by
+`LoggingConfiguration`.
 
-The agent is optional when running or debugging the application locally. To attach it to a local Testcontainers run:
+Traces include HTTP requests, Spring Security operations and Spring Modulith module calls and event handling.
+Asynchronous event handling remains connected to the originating request's trace. SQL operations, internal repository
+methods and domain methods do not automatically get individual spans.
+
+Trace sampling is set to 100% for development; adjust `management.tracing.sampling.probability` for your deployed
+environment.
+
+The included `compose.yaml` provides a Grafana LGTM stack for inspecting logs, traces and metrics locally. Start it
+with:
 
 ```sh
-./mvnw spring-boot:test-run \
-  -Dspring-boot.run.jvmArguments='-javaagent:otel/opentelemetry-javaagent.jar'
+docker compose up -d
 ```
 
-When running from an IDE, add `-javaagent:otel/opentelemetry-javaagent.jar` as a VM option, using the project root as
-the working directory. Set `OTEL_EXPORTER_OTLP_ENDPOINT` to your collector's URL and `OTEL_EXPORTER_OTLP_PROTOCOL` if a
-different protocol is needed. By default, the agent exports over OTLP/HTTP to `http://localhost:4318`.
+Then run `TestApplication` or `./mvnw spring-boot:test-run` and open Grafana at <http://localhost:3000>. The Grafana
+stack is optional for local development and debugging; the application can run without it, though telemetry exporters
+may report connection errors when no collector is available.
 
-The Docker image attaches the included agent automatically using `-javaagent:otel.jar`, copying it from
-`otel/opentelemetry-javaagent.jar` during the build.
+The configured OTLP/HTTP endpoints use `http://localhost:4318` with separate paths for each signal. To use another
+collector, override the following settings:
 
-Agent releases are available [here](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases).
+| Signal  | Environment variable                                    | Local endpoint                     |
+|---------|---------------------------------------------------------|------------------------------------|
+| Traces  | `MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT` | `http://localhost:4318/v1/traces`  |
+| Logs    | `MANAGEMENT_OPENTELEMETRY_LOGGING_EXPORT_OTLP_ENDPOINT` | `http://localhost:4318/v1/logs`    |
+| Metrics | `MANAGEMENT_OTLP_METRICS_EXPORT_URL`                    | `http://localhost:4318/v1/metrics` |
 
 ## GitHub's configuration, actions and applications
 
@@ -177,9 +192,8 @@ vulnerability-scanning or deployment job.
 #### Build and test the code
 
 It sets up Temurin JDK 25 and runs `./mvnw -B clean verify` using the included Maven Wrapper to compile, test and
-package the application. It uploads the Dockerfile, application JAR and OpenTelemetry agent for the image-build job.
-Test reports from `target/surefire-reports` are uploaded separately, including when the build fails, if reports are
-available.
+package the application. It uploads the Dockerfile and application JAR for the image-build job. Test reports from 
+`target/surefire-reports` are uploaded separately, including when the build fails, if reports are available.
 
 #### Build and push the image
 
