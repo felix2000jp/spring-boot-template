@@ -1,12 +1,13 @@
 package dev.felix2000jp.springboottemplate.notes.domain;
 
 import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.NoteId;
+import org.jmolecules.ddd.types.Repository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface NoteRepository {
+public interface NoteRepository extends Repository<Note, NoteId> {
 
     List<Note> findAllByIdAppuserIdValue(UUID appuserIdValue);
 
