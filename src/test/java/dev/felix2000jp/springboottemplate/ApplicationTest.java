@@ -1,5 +1,6 @@
 package dev.felix2000jp.springboottemplate;
 
+import dev.felix2000jp.springboottemplate.system.configurations.TestcontainersConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;

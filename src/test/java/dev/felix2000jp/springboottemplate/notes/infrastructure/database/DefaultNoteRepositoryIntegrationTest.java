@@ -1,6 +1,6 @@
 package dev.felix2000jp.springboottemplate.notes.infrastructure.database;
 
-import dev.felix2000jp.springboottemplate.TestcontainersConfiguration;
+import dev.felix2000jp.springboottemplate.system.configurations.TestcontainersConfiguration;
 import dev.felix2000jp.springboottemplate.notes.domain.Note;
 import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.Content;
 import dev.felix2000jp.springboottemplate.notes.domain.valueobjects.NoteId;

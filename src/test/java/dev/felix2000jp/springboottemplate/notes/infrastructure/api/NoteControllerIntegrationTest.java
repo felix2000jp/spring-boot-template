@@ -1,6 +1,6 @@
 package dev.felix2000jp.springboottemplate.notes.infrastructure.api;
 
-import dev.felix2000jp.springboottemplate.TestcontainersConfiguration;
+import dev.felix2000jp.springboottemplate.system.configurations.TestcontainersConfiguration;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.CreateNoteDto;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.NoteDto;
 import dev.felix2000jp.springboottemplate.notes.application.dtos.NoteListDto;

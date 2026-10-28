@@ -1,4 +1,4 @@
-package dev.felix2000jp.springboottemplate;
+package dev.felix2000jp.springboottemplate.system.configurations;
 
 import org.springframework.boot.devtools.restart.RestartScope;
 import org.springframework.boot.test.context.TestConfiguration;
