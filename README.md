@@ -1,15 +1,15 @@
 # Spring Boot Template
 
-This repository is a template for scaffolding new Spring Boot projects. It follows a modular monolith architecture enforced with
-the spring modulith package as well as a simplified onion architecture enforced with j-molecules. The project is organized
-into the following modules and scaffold:
+This repository is a template for scaffolding new Spring Boot projects. It follows a modular monolith architecture
+enforced with the spring modulith package as well as a simplified onion architecture enforced with j-molecules. The
+project is organized into the following modules and scaffold:
 
-| Module/package | Responsibility |
-| --- | --- |
-| `appusers` | Authentication and user management |
-| `notes` | Note management |
-| `system` | Shared security services and configurations |
-| `sample` | Scaffold with empty domain, application and infrastructure packages for new modules |
+| Module/package | Responsibility                                                                      |
+|----------------|-------------------------------------------------------------------------------------|
+| `appusers`     | Authentication and user management                                                  |
+| `notes`        | Note management                                                                     |
+| `system`       | Shared security services and configurations                                         |
+| `sample`       | Scaffold with empty domain, application and infrastructure packages for new modules |
 
 Since this is a modular monolith, dependencies between modules are limited. These are only allowed through root level
 interfaces/classes (ex: `SecurityService.java`) and named interfaces (ex `AppuserDeletedEvent`).
@@ -40,27 +40,35 @@ with username and password `postgres`, exposed on port 5432. The application lis
 
 ## Authentication
 
-This template has 2 different type of authentication: basic authentication (username and password) and bearer token
-authentication (JWT). It also uses sessions for the frontend as they safer and easier to use in this use case
+This template supports two types of authentication: HTTP Basic (username and password) and Bearer token authentication
+(JWT). The API is stateless and does not use server-side sessions.
 
-The module `auth` is where everything related to authentication and authorization is. This projects uses the default
-configurations for both basic and bearer authentications apart from the fact that it disabled csrf and session state as
-they are not necessary.
+The `appusers` module handles user registration, credentials and token issuance. The `system` module provides shared
+security services and configures HTTP Basic and JWT authentication. CSRF protection is disabled for the stateless API.
 
-Also, Jwt authentication type requires a public and private secrets/keys in order to decode and encode the tokens. I
-have already generated the keys which are located in **resources/certificates**. To generate new keys follow these
-steps:
+Authorization is enforced on controller methods using `@PreAuthorize`. Registration is public, login requires HTTP Basic
+authentication, and the remaining user and notes endpoints require the `SCOPE_MEMBER` authority. The API security filter
+chain permits requests through to these method checks, so new protected endpoints must declare their authorization
+rules.
 
+JWT authentication uses a private RSA key to sign tokens and a public key to verify them. The default configuration
+reads `certs/private.pem` and `certs/public.pem`, relative to the working directory. The included keys are for
+development and tests; generate a separate pair for each deployed environment.
+
+To generate a new pair, run the following commands from your project's root directory. These replace the existing keys:
+
+```sh
+mkdir -p certs
+
+# create a private key in PKCS#8 format
+openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out certs/private.pem
+
+# extract the public key
+openssl pkey -in certs/private.pem -pubout -out certs/public.pem
 ```
-# create rsa key pair
-openssl genrsa -out keypair.pem 2048
 
-# extract public key
-openssl rsa -in keypair.pem -pubout -out public.pem
-
-# create private key in PKCS#8 format
-openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out private.pem
-```
+For keys stored elsewhere, set `JWT_RSA_PRIVATE_KEY=file:/path/to/private.pem` and
+`JWT_RSA_PUBLIC_KEY=file:/path/to/public.pem`.
 
 ## Logs, traces and metrics
 
