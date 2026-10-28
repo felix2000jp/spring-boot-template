@@ -151,7 +151,9 @@ it has some minimal configurations that can be extended further if needed.
 
 #### Merge rules
 
-To protect both the main branch and the git history a couple of rules are in place:
+This repository uses the following rules to protect the main branch and git history. These settings are not copied when
+creating a repository from the template. You can review this repository's rules in its GitHub settings and use them as a
+reference when configuring your new repository:
 
 1. Only squash merges are allowed to the main branch
 2. Before merging changes to the main branch a pull request must be opened
@@ -159,36 +161,38 @@ To protect both the main branch and the git history a couple of rules are in pla
 
 #### Dependabot
 
-To help with keeping the application dependencies always up to date, this repository has dependabot configured to, on a
-weekly basis open PRs with version updates for both the maven and actions dependencies used.
+Dependabot is configured to open weekly pull requests with version updates for Maven dependencies, Docker base images
+and GitHub Actions. Updates are grouped by ecosystem in `.github/dependabot.yml`.
 
 ### GitHub actions - CI/CD Workflow
 
-This workflow is made of 4 different jobs and its intent is to scan the code for vulnerabilities, build and test your
-changes and then to build a docker image with the resulting JAR file and push it to a registry.
+This workflow runs for pushes to `main` and pull requests targeting `main`. It has two jobs: build and test the code,
+then build a Docker image from the resulting JAR file. Image publishing is currently disabled. There is no dedicated
+vulnerability-scanning or deployment job.
 
 #### Build and test the code
 
-It sets up temurin JDK and maven and then runs the command "mvn clean verify". This command will compile the code, test
-it, package it in a JAR file. It then uploads the resulting JAR file, so it can be used in other jobs.
+It sets up Temurin JDK 25 and runs `./mvnw -B clean verify` using the included Maven Wrapper to compile, test and
+package the application. It uploads the Dockerfile, application JAR and OpenTelemetry agent for the image-build job.
+Test reports from `target/surefire-reports` are uploaded separately, including when the build fails, if reports are
+available.
 
 #### Build and push the image
 
 This job is dependent on [Build and test the code](#build-and-test-the-code).
 
-It downloads the JAR file artifact and build a docker image with it. After building the image it pushes it to the
-registry. This step is configured to only run it is running on the main branch.
+It downloads the build artifacts and builds a Docker image using the included Dockerfile. Image tags use
+`ghcr.io/<owner>/<repository>`, derived automatically from the current repository, with commit SHA and `latest` tags.
+The job runs after a successful build for both pushes to `main` and pull requests targeting `main`.
 
-#### Deploy the Application
-
-This job is dependent on [Build and push the image](#build-and-push-the-image).
-
-In this step we should make the necessary changes to deploy the application to wherever it should be deployed.
+Image publishing is currently disabled. To enable publishing on pushes to `main`, uncomment the `push` input in
+`.github/workflows/ci-cd-workflow.yaml`.
 
 ### GitHub applications - Semantic PR
 
-It verifies your Pull Request title follows the conventional commit guidelines. For more information on the rules being
-enforced, take a look at
+The Semantic PR GitHub app verifies that pull request titles follow the conventional commit guidelines. Give the app
+access to your new repository to enable these checks; the included `.github/semantic.yml` configures the allowed title
+prefixes. For more information on the rules, take a look at
 the [angular commit message guidelines](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines).
 
 - feat: A new feature
