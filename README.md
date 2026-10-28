@@ -1,14 +1,42 @@
 # Spring Boot Template
 
-This project serves as template for new spring applications. It follows a modular monolith architecture enforced with
-the spring modulith package as well as a simplified onion architecture enforced with j-molecules. It currently has 3
-modules: auth (for auth and user management related stuff), notes (for note related stuff) and shared (for common stuff
-like configurations).
+This repository is a template for scaffolding new Spring Boot projects. It follows a modular monolith architecture enforced with
+the spring modulith package as well as a simplified onion architecture enforced with j-molecules. The project is organized
+into the following modules and scaffold:
+
+| Module/package | Responsibility |
+| --- | --- |
+| `appusers` | Authentication and user management |
+| `notes` | Note management |
+| `system` | Shared security services and configurations |
+| `sample` | Scaffold with empty domain, application and infrastructure packages for new modules |
 
 Since this is a modular monolith, dependencies between modules are limited. These are only allowed through root level
-interfaces/classes (ex: `SecurityService.java`) and named interfaces (ex `AppuserDeletedEvent`). Also, inside modules a
-simplified onion architecture is used therefore inner layers must not depend on outer layers (domain -> application ->
-infrastructure).
+interfaces/classes (ex: `SecurityService.java`) and named interfaces (ex `AppuserDeletedEvent`).
+
+## Getting started
+
+Use this repository as a GitHub template to create a new repository, then clone your new repository. Update the project
+coordinates in `pom.xml`, the Java package names and the application name in `src/main/resources/application.yaml`
+to match your project. The `sample` package provides a starting point for adding your own modules.
+
+To build and verify your new project, you need JDK 25 and Docker. Docker Compose is used for development services,
+and integration tests use Testcontainers to start PostgreSQL. The Maven Wrapper is included.
+
+From your new project's root directory, run:
+
+```sh
+./mvnw clean verify
+```
+
+To start the application during development:
+
+```sh
+./mvnw spring-boot:run
+```
+
+Spring Boot starts PostgreSQL through the included `compose.yaml`. The development database is `application-db`,
+with username and password `postgres`, exposed on port 5432. The application listens on port 8080 by default.
 
 ## Authentication
 
