@@ -16,8 +16,8 @@ interfaces/classes (ex: `SecurityService.java`) and named interfaces (ex `Appuse
 
 ## Getting started
 
-Use this repository as a GitHub template to create a new repository, then clone your new repository. Update the following
-to match your project:
+Use this repository as a GitHub template to create a new repository, then clone your new repository. Update the
+following to match your project:
 
 - Project coordinates, name and description in `pom.xml`.
 - Java package names under `src/main/java` and `src/test/java`.
@@ -86,6 +86,33 @@ project with the default port, you can access:
 - OpenAPI JSON: <http://localhost:8080/v3/api-docs>
 
 Keep the OpenAPI annotations on controllers and DTOs up to date as you add or change endpoints.
+
+## Error handling
+
+API errors handled by Spring MVC and the module exception handlers use Problem Detail responses with the
+`application/problem+json` content type. Module exception handlers map domain exceptions to HTTP statuses, such as
+404 for a missing user or note and 409 for an existing username.
+
+The shared `GlobalExceptionHandler` logs unexpected exceptions and returns a generic 500 Problem Detail without
+exposing internal error details. Authentication and authorization exceptions are passed back to Spring Security
+and follow its response handling.
+
+When adding a module, define its domain exceptions and map them in a `@RestControllerAdvice`, following the existing
+`AppuserExceptionHandler` and `NoteExceptionHandler` examples.
+
+## Event handling
+
+Modules communicate through domain events when work spans module boundaries. For example, deleting an app user
+publishes `AppuserDeletedEvent`. The notes module handles it in `AppuserDeletedEventHandler` and removes that user's
+notes.
+
+The handler uses Spring Modulith's `@ApplicationModuleListener` to process the event asynchronously after the
+user-deletion transaction commits, in a separate transaction. The deletion response does not guarantee that note cleanup
+has completed. Spring Modulith's JDBC event publication registry records event publications in PostgreSQL and tracks 
+their completion.
+
+When adding cross-module events, expose them through a named interface, as `AppuserDeletedEvent` does with
+`@NamedInterface`, and place listeners in the consuming module's application layer.
 
 ## Logs, traces and metrics
 
