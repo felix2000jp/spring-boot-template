@@ -108,7 +108,7 @@ notes.
 
 The handler uses Spring Modulith's `@ApplicationModuleListener` to process the event asynchronously after the
 user-deletion transaction commits, in a separate transaction. The deletion response does not guarantee that note cleanup
-has completed. Spring Modulith's JDBC event publication registry records event publications in PostgreSQL and tracks 
+has completed. Spring Modulith's JDBC event publication registry records event publications in PostgreSQL and tracks
 their completion.
 
 When adding cross-module events, expose them through a named interface, as `AppuserDeletedEvent` does with
@@ -116,18 +116,31 @@ When adding cross-module events, expose them through a named interface, as `Appu
 
 ## Logs, traces and metrics
 
-This template includes Spring Boot Actuator with both the health and metrics endpoints enabled.
+This template includes Spring Boot Actuator. Only `/actuator/health` is exposed over HTTP by the current configuration.
 
 For storing and viewing logs, traces and metrics this template uses the Grafana LGTM stack with an OpenTelemetry
-Collector. As for capturing telemetry data, the OpenTelemetry Java Agent is configured to run alongside the application
-and publish the data to the collector via grpc.
+Collector. The OpenTelemetry Java agent captures telemetry from the application and exports it to the collector.
 
-There is also the `RequestIdHeaderFilter` which creates a unique id for every http request and adds this id to both the
-response headers and the MDC. You use this id for correlating logs and requests. Note that this id only tracks the http
-request and therefore cannot be used for tracking the entire trace, for that purpose use the trace_id attribute.
+The OpenTelemetry agent and Grafana LGTM stack are optional when running or debugging the application locally.
 
-The application uses the open telemetry java agent. To download it
-go [here](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases).
+To start Grafana LGTM alongside PostgreSQL and attach the agent, run the following command. It enables the `production`
+Compose profile through Spring Boot and passes the agent option to the application JVM:
+
+```sh
+./mvnw spring-boot:run \
+  -Dspring-boot.run.arguments='--spring.docker.compose.profiles.active=production' \
+  -Dspring-boot.run.jvmArguments='-javaagent:otel/opentelemetry-javaagent.jar'
+```
+
+When running from an IDE, set `--spring.docker.compose.profiles.active=production` as a program argument and
+`-javaagent:otel/opentelemetry-javaagent.jar` as a VM option, using the project root as the working directory.
+
+Grafana is available at <http://localhost:3000>. The collector exposes OTLP ports 4317 (gRPC) and 4318 (HTTP).
+
+The Docker image attaches the included agent automatically using `-javaagent:otel.jar`, copying it from
+`otel/opentelemetry-javaagent.jar` during the build.
+
+Agent releases are available [here](https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases).
 
 ## GitHub's configuration, actions and applications
 
