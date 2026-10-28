@@ -1,3 +1,5 @@
+/src/main/resources/certificates/
+
 .DS_Store
 target/
 !.mvn/wrapper/maven-wrapper.jar

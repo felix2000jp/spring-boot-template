@@ -39,5 +39,5 @@ jdbc:
     - CONNECTION
 jwt:
   rsa:
-    public-key: file:certs/public.pem
-    private-key: file:certs/private.pem
+    public-key: classpath:certificates/public.pem
+    private-key: classpath:certificates/public.pem

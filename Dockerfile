@@ -4,9 +4,6 @@
 FROM eclipse-temurin:25
 RUN groupadd spring && useradd -m -g spring spring
 
-# Uncomment for ready to use development builds
-# COPY certs /certs
-
 ARG TARGET_JAR=target/*.jar
 COPY ${TARGET_JAR} target.jar
 
