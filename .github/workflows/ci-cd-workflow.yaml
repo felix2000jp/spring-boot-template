@@ -28,24 +28,21 @@ jobs:
           java-version: 25
           cache: maven
       - name: Build and test code
-        run: |
-          ./mvnw -B clean verify
-          mkdir -p artifacts artifacts/otel artifacts/target
-          cp Dockerfile artifacts
-          cp otel/*.jar artifacts/otel
-          cp target/*.jar artifacts/target
-      - name: Upload test reports
+        run: ./mvnw -B clean verify
+      - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: surefire-reports
+          name: reports
           path: target/surefire-reports
           if-no-files-found: warn
-      - name: Upload artifacts folder
+      - name: Upload image build context
         uses: actions/upload-artifact@v7
         with:
-          name: artifacts
-          path: artifacts
+          name: image-build-context
+          path: |
+            Dockerfile
+            target/*.jar
           if-no-files-found: error
   build-and-push-image:
     name: Build and push the image
@@ -71,10 +68,10 @@ jobs:
           tags: |
             type=sha
             type=raw,value=latest
-      - name: Download artifacts folder
+      - name: Download image build context
         uses: actions/download-artifact@v8
         with:
-          name: artifacts
+          name: image-build-context
           path: .
       - name: Build and push image
         uses: docker/build-push-action@v7
