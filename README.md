@@ -156,8 +156,20 @@ collector, override the following settings:
 | Metrics | `MANAGEMENT_OTLP_METRICS_EXPORT_URL`                    | `http://localhost:4318/v1/metrics` |
 
 Telemetry export is disabled by default, so tests and local runs do not require the Grafana stack. Console logging
-remains enabled. To export telemetry to the running stack, set `management.tracing.export.otlp.enabled`,
-`management.logging.export.otlp.enabled` and `management.otlp.metrics.export.enabled` to `true` in `application.yaml`.
+remains enabled. With the Grafana stack running, start the application with all three exports enabled:
+
+```sh
+./mvnw spring-boot:test-run \
+  -Dspring-boot.run.arguments="\
+    --management.otlp.metrics.export.enabled=true \
+    --management.logging.export.otlp.enabled=true \
+    --management.tracing.export.otlp.enabled=true \
+    --management.tracing.sampling.probability=1.0 \
+    --management.otlp.metrics.export.step=10s"
+```
+
+This starts PostgreSQL through Testcontainers and overrides the configuration for this run. The last two arguments are 
+optional settings for local development: they sample every trace and export metrics every 10 seconds.
 
 ## GitHub's configuration, actions and applications
 
